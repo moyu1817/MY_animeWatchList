@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+/* NProgress bar — purple theme */
+#nprogress .bar {
+  background: #a855f7 !important;
+  height: 3px !important;
+}
+#nprogress .peg {
+  box-shadow: 0 0 10px #a855f7, 0 0 5px #a855f7 !important;
+}
