@@ -24,10 +24,10 @@ export function Seasons() {
   const currentYear = new Date().getFullYear()
   const currentSeason = getCurrentSeason()
 
-  usePageTitle(`${selectedSeason ? selectedSeason.charAt(0).toUpperCase() + selectedSeason.slice(1) : ''} ${selectedYear} Season`)
   const [selectedYear, setSelectedYear] = useState(currentYear)
   const [selectedSeason, setSelectedSeason] = useState(currentSeason)
   const [page, setPage] = useState(1)
+  usePageTitle(`${selectedSeason.charAt(0).toUpperCase() + selectedSeason.slice(1)} ${selectedYear} Season`)
 
   const { data: seasonsList, isLoading: loadingList } = useQuery({
     queryKey: ['seasons-list'],
