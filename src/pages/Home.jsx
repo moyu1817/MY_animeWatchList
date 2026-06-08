@@ -8,7 +8,7 @@ import { useRecentlyViewed } from '../context/RecentlyViewedContext'
 import { usePageTitle } from '../hooks/usePageTitle'
 
 function AnimeRow({ title, queryKey, queryFn, linkTo }) {
-  const { data, isLoading } = useQuery({ queryKey, queryFn })
+  const { data, isLoading, isError, refetch, isFetching } = useQuery({ queryKey, queryFn })
   const items = data?.data?.slice(0, 15) ?? []
   const rowRef = useRef(null)
 
@@ -21,30 +21,33 @@ function AnimeRow({ title, queryKey, queryFn, linkTo }) {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-semibold text-white">{title}</h2>
         <div className="flex items-center gap-3">
+          {isError && (
+            <button
+              onClick={() => refetch()}
+              disabled={isFetching}
+              className="text-xs text-zinc-500 hover:text-emerald-400 transition-colors cursor-pointer disabled:opacity-50"
+            >
+              {isFetching ? 'Retrying…' : 'Retry ↺'}
+            </button>
+          )}
           <div className="flex gap-1">
-            <button
-              onClick={() => scroll(-1)}
-              className="w-7 h-7 flex items-center justify-center rounded border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer text-xs"
-            >
-              ‹
-            </button>
-            <button
-              onClick={() => scroll(1)}
-              className="w-7 h-7 flex items-center justify-center rounded border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer text-xs"
-            >
-              ›
-            </button>
+            <button onClick={() => scroll(-1)} className="w-7 h-7 flex items-center justify-center rounded border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer text-xs">‹</button>
+            <button onClick={() => scroll(1)}  className="w-7 h-7 flex items-center justify-center rounded border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer text-xs">›</button>
           </div>
-          <Link to={linkTo} className="text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
-            See all →
-          </Link>
+          <Link to={linkTo} className="text-sm text-emerald-400 hover:text-emerald-300 transition-colors">See all →</Link>
         </div>
       </div>
 
       <div ref={rowRef} className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
-        {isLoading
+        {isLoading || isFetching && items.length === 0
           ? Array.from({ length: 10 }).map((_, i) => (
             <div key={i} className="w-40 shrink-0"><SkeletonCard /></div>
+          ))
+          : isError && items.length === 0
+          ? Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="w-40 shrink-0 bg-zinc-900 border border-zinc-800 rounded-md aspect-[3/4] flex items-center justify-center">
+              <span className="text-zinc-700 text-xs">—</span>
+            </div>
           ))
           : items.map(anime => (
             <div key={anime.mal_id} className="w-40 shrink-0">

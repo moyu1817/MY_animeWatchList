@@ -8,8 +8,9 @@ import App from './App.jsx'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5,
-      retry: 1,
+      staleTime: 1000 * 60 * 10,
+      retry: 3,
+      retryDelay: attemptIndex => Math.min(1000 * (attemptIndex + 1), 6000),
     },
   },
 })
