@@ -3,13 +3,15 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { useDebounce } from '../hooks/useDebounce'
-import { getSearchSuggestions } from '../services/jikanApi'
+import { getSearchSuggestions, getRandomAnime } from '../services/jikanApi'
+import { ThemeToggle } from './ThemeToggle'
 
 export function Navbar() {
   const { watchlist } = useWatchlist()
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
+  const [loadingRandom, setLoadingRandom] = useState(false)
   const containerRef = useRef(null)
   const debouncedQuery = useDebounce(query, 300)
 
@@ -20,7 +22,6 @@ export function Navbar() {
     staleTime: 1000 * 30,
   })
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e) {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
@@ -47,8 +48,18 @@ export function Navbar() {
     setOpen(false)
   }
 
-  const showDropdown = open && debouncedQuery.trim().length >= 2 && suggestions.length > 0
+  async function handleRandom() {
+    if (loadingRandom) return
+    setLoadingRandom(true)
+    try {
+      const anime = await getRandomAnime()
+      navigate(`/anime/${anime.mal_id}`)
+    } finally {
+      setLoadingRandom(false)
+    }
+  }
 
+  const showDropdown = open && debouncedQuery.trim().length >= 2 && suggestions.length > 0
   const linkClass = ({ isActive }) =>
     isActive ? 'text-emerald-400 text-sm' : 'text-zinc-500 hover:text-white text-sm transition-colors'
 
@@ -69,62 +80,73 @@ export function Navbar() {
         )}
       </NavLink>
 
-      <form onSubmit={handleSearch} className="ml-auto flex items-center gap-2">
-        <div className="relative" ref={containerRef}>
-          <input
-            type="text"
-            value={query}
-            onChange={e => { setQuery(e.target.value); setOpen(true) }}
-            onFocus={() => setOpen(true)}
-            placeholder="Search all anime..."
-            className="bg-zinc-900 border border-zinc-800 text-white text-sm rounded-md px-3 py-1.5 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition-colors w-44 lg:w-64"
-          />
-
-          {/* Suggestions dropdown */}
-          {showDropdown && (
-            <div className="absolute top-full mt-1 left-0 w-72 bg-zinc-900 border border-zinc-800 rounded-md overflow-hidden shadow-2xl z-50">
-              {suggestions.map(anime => {
-                const title = anime.title_english ?? anime.title
-                const image = anime.images?.jpg?.image_url
-                return (
-                  <button
-                    key={anime.mal_id}
-                    type="button"
-                    onClick={() => handleSelect(anime)}
-                    className="w-full flex items-center gap-3 px-3 py-2 hover:bg-zinc-800 transition-colors cursor-pointer text-left"
-                  >
-                    <img
-                      src={image}
-                      alt={title}
-                      className="w-8 h-11 object-cover rounded shrink-0"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-white text-sm truncate">{title}</p>
-                      <p className="text-zinc-600 text-xs flex gap-2 mt-0.5">
-                        {anime.type && <span>{anime.type}</span>}
-                        {anime.score && <span className="text-emerald-500">★ {anime.score}</span>}
-                      </p>
-                    </div>
-                  </button>
-                )
-              })}
-              <button
-                type="submit"
-                className="w-full px-3 py-2 text-left text-sm text-emerald-400 hover:bg-zinc-800 border-t border-zinc-800 transition-colors cursor-pointer"
-              >
-                See all results for "<span className="font-medium">{debouncedQuery}</span>" →
-              </button>
-            </div>
-          )}
-        </div>
-
+      <div className="ml-auto flex items-center gap-2">
+        {/* Surprise me */}
         <button
-          type="submit"
-          className="border border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 text-sm px-3 py-1.5 rounded-md transition-colors cursor-pointer shrink-0"
+          onClick={handleRandom}
+          disabled={loadingRandom}
+          className="text-zinc-500 hover:text-white text-sm transition-colors cursor-pointer disabled:opacity-50 shrink-0"
+          title="Surprise me — random anime"
         >
-          Search
+          {loadingRandom ? '...' : '🎲'}
         </button>
-      </form>
+
+        <ThemeToggle />
+
+        {/* Search */}
+        <form onSubmit={handleSearch} className="flex items-center gap-2">
+          <div className="relative" ref={containerRef}>
+            <input
+              type="text"
+              value={query}
+              onChange={e => { setQuery(e.target.value); setOpen(true) }}
+              onFocus={() => setOpen(true)}
+              placeholder="Search all anime..."
+              className="bg-zinc-900 border border-zinc-800 text-white text-sm rounded-md px-3 py-1.5 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition-colors w-44 lg:w-64"
+            />
+            {showDropdown && (
+              <div className="absolute top-full mt-1 left-0 w-72 bg-zinc-900 border border-zinc-800 rounded-md overflow-hidden shadow-2xl z-50">
+                {suggestions.map(anime => {
+                  const title = anime.title_english ?? anime.title
+                  return (
+                    <button
+                      key={anime.mal_id}
+                      type="button"
+                      onClick={() => handleSelect(anime)}
+                      className="w-full flex items-center gap-3 px-3 py-2 hover:bg-zinc-800 transition-colors cursor-pointer text-left"
+                    >
+                      <img
+                        src={anime.images?.jpg?.image_url}
+                        alt={title}
+                        className="w-8 h-11 object-cover rounded shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-white text-sm truncate">{title}</p>
+                        <p className="text-zinc-600 text-xs flex gap-2 mt-0.5">
+                          {anime.type && <span>{anime.type}</span>}
+                          {anime.score && <span className="text-emerald-500">★ {anime.score}</span>}
+                        </p>
+                      </div>
+                    </button>
+                  )
+                })}
+                <button
+                  type="submit"
+                  className="w-full px-3 py-2 text-left text-sm text-emerald-400 hover:bg-zinc-800 border-t border-zinc-800 transition-colors cursor-pointer"
+                >
+                  See all results for "<span className="font-medium">{debouncedQuery}</span>" →
+                </button>
+              </div>
+            )}
+          </div>
+          <button
+            type="submit"
+            className="border border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 text-sm px-3 py-1.5 rounded-md transition-colors cursor-pointer shrink-0"
+          >
+            Search
+          </button>
+        </form>
+      </div>
     </nav>
   )
 }

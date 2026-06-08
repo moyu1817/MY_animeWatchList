@@ -1,5 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { WatchlistProvider } from './context/WatchlistContext'
+import { ThemeProvider } from './context/ThemeContext'
+import { RecentlyViewedProvider } from './context/RecentlyViewedContext'
 import { Navbar } from './components/Navbar'
 import { ScrollToTop } from './components/ScrollToTop'
 import { LoadingBar } from './components/LoadingBar'
@@ -14,24 +16,28 @@ import { AnimeDetail } from './pages/AnimeDetail'
 
 export default function App() {
   return (
-    <WatchlistProvider>
-      <div className="min-h-screen bg-black text-white">
-        <LoadingBar />
-        <ScrollToTop />
-        <Navbar />
-        <main>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/featured" element={<Featured />} />
-            <Route path="/upcoming" element={<Upcoming />} />
-            <Route path="/seasons" element={<Seasons />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/watchlist" element={<Watchlist />} />
-            <Route path="/anime/:id" element={<AnimeDetail />} />
-          </Routes>
-        </main>
-        <BackToTop />
-      </div>
-    </WatchlistProvider>
+    <ThemeProvider>
+      <WatchlistProvider>
+        <RecentlyViewedProvider>
+          <div className="min-h-screen bg-black text-white">
+            <LoadingBar />
+            <ScrollToTop />
+            <Navbar />
+            <main>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/featured" element={<Featured />} />
+                <Route path="/upcoming" element={<Upcoming />} />
+                <Route path="/seasons" element={<Seasons />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/watchlist" element={<Watchlist />} />
+                <Route path="/anime/:id" element={<AnimeDetail />} />
+              </Routes>
+            </main>
+            <BackToTop />
+          </div>
+        </RecentlyViewedProvider>
+      </WatchlistProvider>
+    </ThemeProvider>
   )
 }

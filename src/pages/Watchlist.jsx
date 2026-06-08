@@ -1,20 +1,18 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { StatusBadge } from '../components/StatusBadge'
 
 const STATUSES = ['plan_to_watch', 'watching', 'completed', 'dropped']
-const STATUS_LABELS = {
-  plan_to_watch: 'Plan to Watch',
-  watching: 'Watching',
-  completed: 'Completed',
-  dropped: 'Dropped',
-}
-const STAT_COLORS = {
-  plan_to_watch: 'text-emerald-400',
-  watching: 'text-emerald-300',
-  completed: 'text-emerald-500',
-  dropped: 'text-zinc-600',
-}
+const STATUS_LABELS = { plan_to_watch: 'Plan to Watch', watching: 'Watching', completed: 'Completed', dropped: 'Dropped' }
+const STAT_COLORS = { plan_to_watch: 'text-emerald-400', watching: 'text-emerald-300', completed: 'text-emerald-500', dropped: 'text-zinc-600' }
+
+const SORT_OPTIONS = [
+  { value: 'date', label: 'Date Added' },
+  { value: 'title', label: 'Title A–Z' },
+  { value: 'score', label: 'MAL Score' },
+  { value: 'rating', label: 'My Rating' },
+]
 
 function RatingPicker({ value, onChange }) {
   return (
@@ -34,8 +32,18 @@ function RatingPicker({ value, onChange }) {
   )
 }
 
+function sortGroup(group, sortBy) {
+  return [...group].sort((a, b) => {
+    if (sortBy === 'title') return (a.title ?? '').localeCompare(b.title ?? '')
+    if (sortBy === 'score') return (b.score ?? 0) - (a.score ?? 0)
+    if (sortBy === 'rating') return (b.rating ?? 0) - (a.rating ?? 0)
+    return new Date(b.addedAt) - new Date(a.addedAt)
+  })
+}
+
 export function Watchlist() {
   const { watchlist, removeAnime, updateStatus, updateRating } = useWatchlist()
+  const [sortBy, setSortBy] = useState('date')
 
   if (watchlist.length === 0) {
     return (
@@ -51,7 +59,7 @@ export function Watchlist() {
 
   const stats = STATUSES.reduce((acc, s) => { acc[s] = watchlist.filter(a => a.status === s).length; return acc }, {})
   const avgRating = (() => {
-    const rated = watchlist.filter(a => a.rating !== null && a.rating !== undefined)
+    const rated = watchlist.filter(a => a.rating != null)
     if (!rated.length) return null
     return (rated.reduce((sum, a) => sum + a.rating, 0) / rated.length).toFixed(1)
   })()
@@ -60,10 +68,19 @@ export function Watchlist() {
     <div className="px-4 py-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold text-white">My Watchlist</h1>
-        <span className="text-zinc-600 text-sm">{watchlist.length} titles</span>
+        <div className="flex items-center gap-3">
+          <span className="text-zinc-600 text-sm">{watchlist.length} titles</span>
+          <select
+            value={sortBy}
+            onChange={e => setSortBy(e.target.value)}
+            className="bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs rounded-md px-2 py-1.5 focus:outline-none focus:border-emerald-500/50 cursor-pointer"
+          >
+            {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        </div>
       </div>
 
-      {/* Stats panel */}
+      {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8 bg-zinc-900 border border-zinc-800 rounded-md p-4">
         {STATUSES.map(s => (
           <div key={s} className="text-center">
@@ -78,7 +95,7 @@ export function Watchlist() {
       </div>
 
       {STATUSES.map(status => {
-        const group = watchlist.filter(a => a.status === status)
+        const group = sortGroup(watchlist.filter(a => a.status === status), sortBy)
         if (group.length === 0) return null
         return (
           <section key={status} className="mb-8">
@@ -109,13 +126,7 @@ export function Watchlist() {
                   >
                     {STATUSES.map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
                   </select>
-                  <button
-                    onClick={() => removeAnime(anime.mal_id)}
-                    className="text-zinc-700 hover:text-red-400 transition-colors text-xl leading-none shrink-0 cursor-pointer"
-                    title="Remove"
-                  >
-                    ×
-                  </button>
+                  <button onClick={() => removeAnime(anime.mal_id)} className="text-zinc-700 hover:text-red-400 transition-colors text-xl leading-none shrink-0 cursor-pointer" title="Remove">×</button>
                 </div>
               ))}
             </div>

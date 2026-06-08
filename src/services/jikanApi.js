@@ -69,3 +69,13 @@ export async function getSeasonAnime(year, season, page = 1) {
   const { data } = await api.get(`/seasons/${year}/${season}`, { params: { page } })
   return data
 }
+
+export async function getAnimeNews(id) {
+  const { data } = await api.get(`/anime/${id}/news`)
+  return data.data
+}
+
+export async function getRandomAnime() {
+  const { data } = await api.get('/random/anime')
+  return data.data
+}
