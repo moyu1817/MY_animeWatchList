@@ -45,6 +45,11 @@ export async function getTopAnime(page = 1, type = '', filter = '') {
   return data
 }
 
+export async function getSearchSuggestions(query) {
+  const { data } = await api.get('/anime', { params: { q: query, limit: 6, order_by: 'popularity', sort: 'desc' } })
+  return data.data
+}
+
 export async function getAnimeCharacters(id) {
   const { data } = await api.get(`/anime/${id}/characters`)
   return data.data
