@@ -85,10 +85,19 @@ export function Navbar() {
         <button
           onClick={handleRandom}
           disabled={loadingRandom}
-          className="text-zinc-500 hover:text-white text-sm transition-colors cursor-pointer disabled:opacity-50 shrink-0"
+          className="w-8 h-8 flex items-center justify-center rounded-md border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-default shrink-0"
           title="Surprise me — random anime"
+          aria-label="Random anime"
         >
-          {loadingRandom ? '...' : '🎲'}
+          {loadingRandom ? (
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-spin">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+            </svg>
+          )}
         </button>
 
         <ThemeToggle />
