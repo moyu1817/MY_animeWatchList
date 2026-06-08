@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
 import { searchAllAnime, getGenres } from '../services/jikanApi'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 
 const TYPES = ['All', 'TV', 'Movie', 'OVA', 'ONA', 'Special']
@@ -21,6 +22,7 @@ const btnInactive = 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text
 export function Search() {
   const [searchParams] = useSearchParams()
   const urlQuery = searchParams.get('q') ?? ''
+  usePageTitle(urlQuery ? `Search: ${urlQuery}` : 'Browse')
 
   const [type, setType] = useState('All')
   const [status, setStatus] = useState('')

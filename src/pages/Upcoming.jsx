@@ -5,6 +5,7 @@ import { SkeletonCard } from '../components/SkeletonCard'
 import { useDebounce } from '../hooks/useDebounce'
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
 import { getUpcomingAnime, searchAnime } from '../services/jikanApi'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 const TYPES = ['All', 'TV', 'Movie', 'OVA', 'ONA', 'Special']
 
@@ -13,6 +14,7 @@ const btnActive = 'bg-emerald-500 text-black font-semibold'
 const btnInactive = 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600'
 
 export function Upcoming() {
+  usePageTitle('Upcoming Anime')
   const [search, setSearch] = useState('')
   const [type, setType] = useState('All')
   const debouncedSearch = useDebounce(search, 400)

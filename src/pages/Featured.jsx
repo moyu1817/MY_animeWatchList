@@ -4,6 +4,7 @@ import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
 import { getTopAnime } from '../services/jikanApi'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 const TABS = [
   { label: 'Top Rated', filter: '' },
@@ -23,6 +24,7 @@ export function Featured() {
   const [activeTab, setActiveTab] = useState(0)
   const [type, setType] = useState('All')
 
+  usePageTitle('Featured')
   const filter = TABS[activeTab].filter
   const typeParam = type === 'All' ? '' : type.toLowerCase()
 

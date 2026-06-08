@@ -79,3 +79,8 @@ export async function getRandomAnime() {
   const { data } = await api.get('/random/anime')
   return data.data
 }
+
+export async function getSchedule(day) {
+  const { data } = await api.get(`/schedules/${day}`)
+  return data
+}

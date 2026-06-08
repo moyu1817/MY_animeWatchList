@@ -6,6 +6,7 @@ import { WatchlistButton } from '../components/WatchlistButton'
 import { AnimeCard } from '../components/AnimeCard'
 import { TrailerModal } from '../components/TrailerModal'
 import { useRecentlyViewed } from '../context/RecentlyViewedContext'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 const TABS = ['Overview', 'Characters', 'Recommendations', 'News']
 
@@ -15,7 +16,6 @@ export function AnimeDetail() {
   const [showTrailer, setShowTrailer] = useState(false)
   const [copied, setCopied] = useState(false)
   const { addToRecent } = useRecentlyViewed()
-
   const { data: anime, isLoading, isError } = useQuery({
     queryKey: ['anime', id],
     queryFn: () => getAnimeById(id),
@@ -35,6 +35,8 @@ export function AnimeDetail() {
     queryFn: () => getAnimeNews(id),
     enabled: tab === 'News',
   })
+
+  usePageTitle(anime ? (anime.title_english ?? anime.title) : null)
 
   useEffect(() => {
     if (anime) addToRecent(anime)

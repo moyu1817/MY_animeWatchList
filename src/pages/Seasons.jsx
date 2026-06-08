@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
 import { getSeasonsList, getSeasonAnime } from '../services/jikanApi'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 const SEASON_ICONS = { winter: '❄️', spring: '🌸', summer: '☀️', fall: '🍂' }
 
@@ -23,6 +24,7 @@ export function Seasons() {
   const currentYear = new Date().getFullYear()
   const currentSeason = getCurrentSeason()
 
+  usePageTitle(`${selectedSeason ? selectedSeason.charAt(0).toUpperCase() + selectedSeason.slice(1) : ''} ${selectedYear} Season`)
   const [selectedYear, setSelectedYear] = useState(currentYear)
   const [selectedSeason, setSelectedSeason] = useState(currentSeason)
   const [page, setPage] = useState(1)

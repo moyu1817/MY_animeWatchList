@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { WatchlistProvider } from './context/WatchlistContext'
 import { ThemeProvider } from './context/ThemeContext'
@@ -8,13 +8,16 @@ import { ScrollToTop } from './components/ScrollToTop'
 import { LoadingBar } from './components/LoadingBar'
 import { BackToTop } from './components/BackToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 
-const Home       = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
-const Featured   = lazy(() => import('./pages/Featured').then(m => ({ default: m.Featured })))
-const Upcoming   = lazy(() => import('./pages/Upcoming').then(m => ({ default: m.Upcoming })))
-const Seasons    = lazy(() => import('./pages/Seasons').then(m => ({ default: m.Seasons })))
-const Search     = lazy(() => import('./pages/Search').then(m => ({ default: m.Search })))
-const Watchlist  = lazy(() => import('./pages/Watchlist').then(m => ({ default: m.Watchlist })))
+const Home        = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
+const Featured    = lazy(() => import('./pages/Featured').then(m => ({ default: m.Featured })))
+const Upcoming    = lazy(() => import('./pages/Upcoming').then(m => ({ default: m.Upcoming })))
+const Seasons     = lazy(() => import('./pages/Seasons').then(m => ({ default: m.Seasons })))
+const Schedule    = lazy(() => import('./pages/Schedule').then(m => ({ default: m.Schedule })))
+const Search      = lazy(() => import('./pages/Search').then(m => ({ default: m.Search })))
+const Watchlist   = lazy(() => import('./pages/Watchlist').then(m => ({ default: m.Watchlist })))
+const Stats       = lazy(() => import('./pages/Stats').then(m => ({ default: m.Stats })))
 const AnimeDetail = lazy(() => import('./pages/AnimeDetail').then(m => ({ default: m.AnimeDetail })))
 
 function PageLoader() {
@@ -25,6 +28,16 @@ function PageLoader() {
   )
 }
 
+function KeyboardShortcuts() {
+  useKeyboardShortcuts({
+    '/': () => {
+      const el = document.getElementById('navbar-search') ?? window.__navSearchRef?.current
+      el?.focus()
+    },
+  })
+  return null
+}
+
 export default function App() {
   return (
     <ThemeProvider>
@@ -33,6 +46,7 @@ export default function App() {
           <div className="min-h-screen bg-black text-white">
             <LoadingBar />
             <ScrollToTop />
+            <KeyboardShortcuts />
             <Navbar />
             <main>
               <ErrorBoundary>
@@ -42,8 +56,10 @@ export default function App() {
                     <Route path="/featured" element={<Featured />} />
                     <Route path="/upcoming" element={<Upcoming />} />
                     <Route path="/seasons" element={<Seasons />} />
+                    <Route path="/schedule" element={<Schedule />} />
                     <Route path="/search" element={<Search />} />
                     <Route path="/watchlist" element={<Watchlist />} />
+                    <Route path="/stats" element={<Stats />} />
                     <Route path="/anime/:id" element={<AnimeDetail />} />
                   </Routes>
                 </Suspense>

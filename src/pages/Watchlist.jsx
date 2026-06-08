@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { StatusBadge } from '../components/StatusBadge'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 const STATUSES = ['plan_to_watch', 'watching', 'completed', 'dropped']
 const STATUS_LABELS = { plan_to_watch: 'Plan to Watch', watching: 'Watching', completed: 'Completed', dropped: 'Dropped' }
@@ -42,6 +43,7 @@ function sortGroup(group, sortBy) {
 }
 
 export function Watchlist() {
+  usePageTitle('My Watchlist')
   const { watchlist, removeAnime, updateStatus, updateRating } = useWatchlist()
   const [sortBy, setSortBy] = useState('date')
 

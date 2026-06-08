@@ -5,6 +5,7 @@ import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
 import { getUpcomingAnime, getCurrentSeason, getTopAnime } from '../services/jikanApi'
 import { useRecentlyViewed } from '../context/RecentlyViewedContext'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 function AnimeRow({ title, queryKey, queryFn, linkTo }) {
   const { data, isLoading } = useQuery({ queryKey, queryFn })
@@ -63,6 +64,7 @@ export function Home() {
   })
   const featured = upcomingData?.data?.[0]
   const { recentlyViewed } = useRecentlyViewed()
+  usePageTitle('Home')
 
   return (
     <div className="py-8 page-fade">
