@@ -11,8 +11,8 @@ function AnimeRow({ title, queryKey, queryFn, linkTo }) {
   return (
     <section className="mb-10">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-white">{title}</h2>
-        <Link to={linkTo} className="text-sm text-purple-400 hover:text-purple-300 transition-colors">
+        <h2 className="text-base font-semibold text-white">{title}</h2>
+        <Link to={linkTo} className="text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
           See all →
         </Link>
       </div>
@@ -36,16 +36,16 @@ export function Home() {
   return (
     <div className="px-4 py-8 max-w-7xl mx-auto">
       {/* Hero */}
-      <div className="relative rounded-2xl overflow-hidden mb-10 h-64 md:h-80 flex items-end bg-gray-900 border border-gray-800">
+      <div className="relative rounded-xl overflow-hidden mb-10 h-64 md:h-80 flex items-end bg-zinc-950 border border-zinc-900">
         {featured && (
           <img
             src={featured.images?.jpg?.large_image_url}
             alt=""
-            className="absolute inset-0 w-full h-full object-cover opacity-25"
+            className="absolute inset-0 w-full h-full object-cover opacity-20"
           />
         )}
         <div className="relative p-6 md:p-10">
-          <p className="text-purple-400 text-sm mb-1 font-medium tracking-wide uppercase">Upcoming Anime</p>
+          <p className="text-emerald-400 text-xs mb-2 font-semibold tracking-widest uppercase">Upcoming Anime</p>
           {featured ? (
             <>
               <h1 className="text-2xl md:text-4xl font-bold text-white mb-4">
@@ -53,13 +53,13 @@ export function Home() {
               </h1>
               <Link
                 to={`/anime/${featured.mal_id}`}
-                className="inline-block bg-purple-600 hover:bg-purple-500 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors"
+                className="inline-block bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-2 rounded-md text-sm font-semibold transition-colors"
               >
                 View Details
               </Link>
             </>
           ) : (
-            <div className="h-8 w-64 bg-gray-800 rounded animate-pulse" />
+            <div className="h-8 w-64 bg-zinc-800 rounded animate-pulse" />
           )}
         </div>
       </div>

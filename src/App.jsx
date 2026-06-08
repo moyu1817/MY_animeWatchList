@@ -15,7 +15,7 @@ import { AnimeDetail } from './pages/AnimeDetail'
 export default function App() {
   return (
     <WatchlistProvider>
-      <div className="min-h-screen bg-gray-950 text-white">
+      <div className="min-h-screen bg-black text-white">
         <LoadingBar />
         <ScrollToTop />
         <Navbar />

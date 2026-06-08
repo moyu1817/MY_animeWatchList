@@ -5,6 +5,7 @@ import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
 import { searchAllAnime, getGenres } from '../services/jikanApi'
 
+
 const TYPES = ['All', 'TV', 'Movie', 'OVA', 'ONA', 'Special']
 const STATUSES = [
   { label: 'All', value: '' },
@@ -12,6 +13,10 @@ const STATUSES = [
   { label: 'Complete', value: 'complete' },
   { label: 'Upcoming', value: 'upcoming' },
 ]
+
+const btnBase = 'px-3 py-1 rounded-md text-sm transition-colors cursor-pointer'
+const btnActive = 'bg-emerald-500 text-black font-semibold'
+const btnInactive = 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600'
 
 export function Search() {
   const [searchParams] = useSearchParams()
@@ -39,7 +44,6 @@ export function Search() {
 
   const allGenres = genresData?.data ?? []
   const visibleGenres = showAllGenres ? allGenres : allGenres.slice(0, 16)
-
   const typeParam = type === 'All' ? '' : type.toLowerCase()
   const hasFilter = urlQuery.length > 0 || genre !== null
 
@@ -62,21 +66,22 @@ export function Search() {
     setPage(1)
   }
 
-  // Empty state — no query and no genre selected
+  const paginationBtn = 'px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-md text-sm text-zinc-400 disabled:opacity-30 hover:bg-zinc-800 hover:text-white transition-colors cursor-pointer disabled:cursor-default'
+
   if (!hasFilter) {
     return (
       <div className="px-4 py-8 max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold text-white mb-6">Browse by Category</h1>
-        <p className="text-gray-500 text-sm mb-5">Select a genre to browse, or type something in the search bar.</p>
+        <h1 className="text-xl font-bold text-white mb-2">Browse by Category</h1>
+        <p className="text-zinc-600 text-sm mb-6">Select a genre or type in the search bar.</p>
         <div className="flex flex-wrap gap-2">
           {allGenres.map(g => (
             <button
               key={g.mal_id}
               onClick={() => toggleGenre(g)}
-              className="px-3 py-1.5 rounded-lg text-sm bg-gray-900 border border-gray-700 text-gray-300 hover:text-white hover:border-purple-500 transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-md text-sm bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-emerald-500/40 transition-colors cursor-pointer"
             >
               {g.name}
-              <span className="ml-1.5 text-gray-600 text-xs">{g.count?.toLocaleString()}</span>
+              <span className="ml-1.5 text-zinc-700 text-xs">{g.count?.toLocaleString()}</span>
             </button>
           ))}
         </div>
@@ -86,28 +91,25 @@ export function Search() {
 
   return (
     <div className="px-4 py-8 max-w-7xl mx-auto">
-      {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">
+        <h1 className="text-xl font-bold text-white">
           {urlQuery
-            ? <>Results for <span className="text-purple-400">"{urlQuery}"</span></>
-            : <>Browsing <span className="text-purple-400">{genre?.name}</span></>
+            ? <>Results for <span className="text-emerald-400">"{urlQuery}"</span></>
+            : <>Browsing <span className="text-emerald-400">{genre?.name}</span></>
           }
         </h1>
         {!isLoading && total > 0 && (
-          <p className="text-gray-500 text-sm mt-1">{total.toLocaleString()} anime found</p>
+          <p className="text-zinc-600 text-sm mt-1">{total.toLocaleString()} anime found</p>
         )}
       </div>
 
       {/* Filters */}
       <div className="space-y-4 mb-6">
-
-        {/* Genre chips */}
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-gray-500 text-sm">Category:</span>
+            <span className="text-zinc-600 text-xs uppercase tracking-wide">Category</span>
             {genre && (
-              <span className="text-xs text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded">
+              <span className="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md">
                 {genre.name} ×
               </span>
             )}
@@ -117,11 +119,7 @@ export function Search() {
               <button
                 key={g.mal_id}
                 onClick={() => toggleGenre(g)}
-                className={`px-3 py-1 rounded-lg text-sm transition-colors cursor-pointer ${
-                  genre?.mal_id === g.mal_id
-                    ? 'bg-purple-600 text-white border border-purple-500'
-                    : 'bg-gray-900 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500'
-                }`}
+                className={`${btnBase} ${genre?.mal_id === g.mal_id ? btnActive : btnInactive}`}
               >
                 {g.name}
               </button>
@@ -129,7 +127,7 @@ export function Search() {
             {allGenres.length > 16 && (
               <button
                 onClick={() => setShowAllGenres(v => !v)}
-                className="px-3 py-1 rounded-lg text-sm text-blue-400 hover:text-blue-300 border border-gray-700 bg-gray-900 cursor-pointer transition-colors"
+                className="px-3 py-1 rounded-md text-sm text-emerald-400 hover:text-emerald-300 border border-zinc-800 bg-zinc-900 cursor-pointer transition-colors"
               >
                 {showAllGenres ? 'Show less ↑' : `+${allGenres.length - 16} more ↓`}
               </button>
@@ -137,44 +135,22 @@ export function Search() {
           </div>
         </div>
 
-        {/* Type & Status */}
         <div className="flex flex-wrap gap-4">
           <div className="flex gap-2 flex-wrap items-center">
-            <span className="text-gray-500 text-sm shrink-0">Type:</span>
+            <span className="text-zinc-600 text-xs uppercase tracking-wide">Type</span>
             {TYPES.map(t => (
-              <button
-                key={t}
-                onClick={() => setFilter(setType)(t)}
-                className={`px-3 py-1 rounded-lg text-sm transition-colors cursor-pointer ${
-                  type === t
-                    ? 'bg-pink-600 text-white'
-                    : 'bg-gray-900 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500'
-                }`}
-              >
-                {t}
-              </button>
+              <button key={t} onClick={() => setFilter(setType)(t)} className={`${btnBase} ${type === t ? btnActive : btnInactive}`}>{t}</button>
             ))}
           </div>
           <div className="flex gap-2 flex-wrap items-center">
-            <span className="text-gray-500 text-sm shrink-0">Status:</span>
+            <span className="text-zinc-600 text-xs uppercase tracking-wide">Status</span>
             {STATUSES.map(s => (
-              <button
-                key={s.value}
-                onClick={() => setFilter(setStatus)(s.value)}
-                className={`px-3 py-1 rounded-lg text-sm transition-colors cursor-pointer ${
-                  status === s.value
-                    ? 'bg-pink-600 text-white'
-                    : 'bg-gray-900 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500'
-                }`}
-              >
-                {s.label}
-              </button>
+              <button key={s.value} onClick={() => setFilter(setStatus)(s.value)} className={`${btnBase} ${status === s.value ? btnActive : btnInactive}`}>{s.label}</button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
         {isLoading
           ? Array.from({ length: 20 }).map((_, i) => <SkeletonCard key={i} />)
@@ -183,27 +159,14 @@ export function Search() {
       </div>
 
       {!isLoading && items.length === 0 && (
-        <p className="text-center text-gray-500 py-12">No results found. Try adjusting your filters.</p>
+        <p className="text-center text-zinc-600 py-12">No results found. Try adjusting your filters.</p>
       )}
 
-      {/* Pagination */}
       {!isLoading && items.length > 0 && (
         <div className="flex justify-center items-center gap-3">
-          <button
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm disabled:opacity-40 hover:bg-gray-800 transition-colors cursor-pointer disabled:cursor-default"
-          >
-            ← Prev
-          </button>
-          <span className="text-gray-400 text-sm">Page {page} of {lastPage}</span>
-          <button
-            onClick={() => setPage(p => Math.min(lastPage, p + 1))}
-            disabled={page === lastPage}
-            className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm disabled:opacity-40 hover:bg-gray-800 transition-colors cursor-pointer disabled:cursor-default"
-          >
-            Next →
-          </button>
+          <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className={paginationBtn}>← Prev</button>
+          <span className="text-zinc-500 text-sm">Page {page} of {lastPage}</span>
+          <button onClick={() => setPage(p => Math.min(lastPage, p + 1))} disabled={page === lastPage} className={paginationBtn}>Next →</button>
         </div>
       )}
     </div>

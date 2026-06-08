@@ -6,7 +6,7 @@ export function AnimeCard({ anime }) {
   const title = anime.title_english ?? anime.title
 
   return (
-    <div className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 transition-transform duration-150 hover:scale-105 hover:border-purple-500/40 flex flex-col">
+    <div className="bg-zinc-900 rounded-md overflow-hidden border border-zinc-800 transition-transform duration-150 hover:scale-105 hover:border-emerald-500/30 flex flex-col">
       <Link to={`/anime/${anime.mal_id}`}>
         <img
           src={image}
@@ -18,14 +18,14 @@ export function AnimeCard({ anime }) {
       <div className="p-3 flex flex-col gap-2 flex-1">
         <Link
           to={`/anime/${anime.mal_id}`}
-          className="font-medium text-sm text-white hover:text-purple-400 line-clamp-2 transition-colors"
+          className="font-medium text-sm text-white hover:text-emerald-400 line-clamp-2 transition-colors"
         >
           {title}
         </Link>
-        <div className="text-xs text-gray-500 flex gap-2 flex-wrap mt-auto">
+        <div className="text-xs text-zinc-600 flex gap-2 flex-wrap mt-auto">
           {anime.type && <span>{anime.type}</span>}
           {anime.episodes && <span>{anime.episodes} eps</span>}
-          {anime.score && <span>★ {anime.score}</span>}
+          {anime.score && <span className="text-emerald-500">★ {anime.score}</span>}
         </div>
         <WatchlistButton anime={{
           mal_id: anime.mal_id,

@@ -15,6 +15,10 @@ const TABS = [
 
 const TYPES = ['All', 'TV', 'Movie', 'OVA', 'ONA', 'Special']
 
+const btnBase = 'px-3 py-1 rounded-md text-sm transition-colors cursor-pointer'
+const btnActive = 'bg-emerald-500 text-black font-semibold'
+const btnInactive = 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600'
+
 export function Featured() {
   const [activeTab, setActiveTab] = useState(0)
   const [type, setType] = useState('All')
@@ -22,13 +26,7 @@ export function Featured() {
   const filter = TABS[activeTab].filter
   const typeParam = type === 'All' ? '' : type.toLowerCase()
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-  } = useInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
     queryKey: ['top-infinite', filter, typeParam],
     queryFn: ({ pageParam }) => getTopAnime(pageParam, typeParam, filter),
     initialPageParam: 1,
@@ -41,26 +39,18 @@ export function Featured() {
   const items = data?.pages.flatMap(p => p.data) ?? []
   const sentinelRef = useInfiniteScroll(fetchNextPage, hasNextPage && !isFetchingNextPage)
 
-  function handleTabChange(index) {
-    setActiveTab(index)
-  }
-
-  function handleTypeChange(t) {
-    setType(t)
-  }
-
   return (
     <div className="px-4 py-8 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold text-white mb-6">Featured Anime</h1>
+      <h1 className="text-xl font-bold text-white mb-6">Featured Anime</h1>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-5 bg-gray-900 border border-gray-800 rounded-xl p-1 w-fit flex-wrap">
+      <div className="flex gap-1 mb-5 bg-zinc-900 border border-zinc-800 rounded-md p-1 w-fit flex-wrap">
         {TABS.map((tab, i) => (
           <button
             key={tab.label}
-            onClick={() => handleTabChange(i)}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-              activeTab === i ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'
+            onClick={() => setActiveTab(i)}
+            className={`px-4 py-1.5 rounded-md text-sm transition-colors cursor-pointer ${
+              activeTab === i ? 'bg-emerald-500 text-black font-semibold' : 'text-zinc-400 hover:text-white'
             }`}
           >
             {tab.label}
@@ -71,21 +61,13 @@ export function Featured() {
       {/* Type filter */}
       <div className="flex gap-2 flex-wrap mb-6">
         {TYPES.map(t => (
-          <button
-            key={t}
-            onClick={() => handleTypeChange(t)}
-            className={`px-3 py-1 rounded-lg text-sm transition-colors cursor-pointer ${
-              type === t
-                ? 'bg-pink-600 text-white'
-                : 'bg-gray-900 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500'
-            }`}
-          >
+          <button key={t} onClick={() => setType(t)} className={`${btnBase} ${type === t ? btnActive : btnInactive}`}>
             {t}
           </button>
         ))}
       </div>
 
-      {/* Grid — skeletons appended inside same grid to avoid layout gap */}
+      {/* Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-4">
         {isLoading
           ? Array.from({ length: 20 }).map((_, i) => <SkeletonCard key={i} />)
@@ -93,9 +75,9 @@ export function Featured() {
             <div key={`${anime.mal_id}-${i}`} className="relative">
               {i < 3 && (
                 <span className={`absolute top-2 left-2 z-10 text-xs font-bold px-1.5 py-0.5 rounded ${
-                  i === 0 ? 'bg-yellow-500 text-black' :
-                  i === 1 ? 'bg-gray-300 text-black' :
-                  'bg-amber-600 text-white'
+                  i === 0 ? 'bg-emerald-400 text-black' :
+                  i === 1 ? 'bg-zinc-300 text-black' :
+                  'bg-zinc-500 text-white'
                 }`}>
                   #{i + 1}
                 </span>
@@ -107,11 +89,9 @@ export function Featured() {
         {isFetchingNextPage && Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={`next-${i}`} />)}
       </div>
 
-      {/* Invisible sentinel — triggers next page load */}
       <div ref={sentinelRef} />
-
       {!isLoading && !hasNextPage && items.length > 0 && (
-        <p className="text-center text-gray-600 text-sm py-4">All {items.length} results loaded.</p>
+        <p className="text-center text-zinc-700 text-sm py-4">All {items.length} results loaded.</p>
       )}
     </div>
   )

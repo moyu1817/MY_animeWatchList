@@ -17,11 +17,13 @@ export function Navbar() {
   }
 
   const linkClass = ({ isActive }) =>
-    isActive ? 'text-white text-sm' : 'text-gray-400 hover:text-white text-sm transition-colors'
+    isActive
+      ? 'text-emerald-400 text-sm'
+      : 'text-zinc-500 hover:text-white text-sm transition-colors'
 
   return (
-    <nav className="sticky top-0 z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800 px-6 py-3 flex items-center gap-5">
-      <Link to="/" className="text-xl font-bold text-purple-400 mr-2 shrink-0">AniWatch</Link>
+    <nav className="sticky top-0 z-50 bg-black border-b border-zinc-900 px-6 py-3 flex items-center gap-5">
+      <Link to="/" className="text-xl font-bold text-emerald-400 mr-2 shrink-0">MoMoAnime!</Link>
 
       <NavLink to="/" end className={linkClass}>Home</NavLink>
       <NavLink to="/featured" className={linkClass}>Featured</NavLink>
@@ -30,7 +32,7 @@ export function Navbar() {
       <NavLink to="/watchlist" className={linkClass}>
         Watchlist
         {watchlist.length > 0 && (
-          <span className="ml-1.5 bg-purple-600 text-white text-xs rounded-full px-1.5 py-0.5">
+          <span className="ml-1.5 bg-emerald-500 text-black text-xs rounded-full px-1.5 py-0.5 font-semibold">
             {watchlist.length}
           </span>
         )}
@@ -42,11 +44,11 @@ export function Navbar() {
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Search all anime..."
-          className="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg px-3 py-1.5 placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors w-44 lg:w-60"
+          className="bg-zinc-900 border border-zinc-800 text-white text-sm rounded-md px-3 py-1.5 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition-colors w-44 lg:w-60"
         />
         <button
           type="submit"
-          className="bg-purple-600 hover:bg-purple-500 text-white text-sm px-3 py-1.5 rounded-lg transition-colors cursor-pointer shrink-0"
+          className="border border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 text-sm px-3 py-1.5 rounded-md transition-colors cursor-pointer shrink-0"
         >
           Search
         </button>
