@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
-import { getUpcomingAnime, getCurrentSeason } from '../services/jikanApi'
+import { getUpcomingAnime, getCurrentSeason, getTopAnime } from '../services/jikanApi'
 import { useRecentlyViewed } from '../context/RecentlyViewedContext'
 
 function AnimeRow({ title, queryKey, queryFn, linkTo }) {
@@ -13,7 +13,9 @@ function AnimeRow({ title, queryKey, queryFn, linkTo }) {
     <section className="mb-10">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-semibold text-white">{title}</h2>
-        <Link to={linkTo} className="text-sm text-emerald-400 hover:text-emerald-300 transition-colors">See all →</Link>
+        <Link to={linkTo} className="text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
+          See all →
+        </Link>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {isLoading
@@ -44,8 +46,13 @@ export function Home() {
           <p className="text-emerald-400 text-xs mb-2 font-semibold tracking-widest uppercase">Upcoming Anime</p>
           {featured ? (
             <>
-              <h1 className="text-2xl md:text-4xl font-bold text-white mb-4">{featured.title_english ?? featured.title}</h1>
-              <Link to={`/anime/${featured.mal_id}`} className="inline-block bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-2 rounded-md text-sm font-semibold transition-colors">
+              <h1 className="text-2xl md:text-4xl font-bold text-white mb-4">
+                {featured.title_english ?? featured.title}
+              </h1>
+              <Link
+                to={`/anime/${featured.mal_id}`}
+                className="inline-block bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-2 rounded-md text-sm font-semibold transition-colors"
+              >
                 View Details
               </Link>
             </>
@@ -55,7 +62,7 @@ export function Home() {
         </div>
       </div>
 
-      {/* Recently viewed */}
+      {/* Continue Browsing */}
       {recentlyViewed.length > 0 && (
         <section className="mb-10">
           <h2 className="text-base font-semibold text-white mb-4">Continue Browsing</h2>
@@ -65,8 +72,48 @@ export function Home() {
         </section>
       )}
 
-      <AnimeRow title="Upcoming This Season" queryKey={['upcoming', 1]} queryFn={() => getUpcomingAnime(1)} linkTo="/upcoming" />
-      <AnimeRow title="Currently Airing" queryKey={['current', 1]} queryFn={() => getCurrentSeason(1)} linkTo="/upcoming" />
+      <AnimeRow
+        title="Upcoming This Season"
+        queryKey={['upcoming', 1]}
+        queryFn={() => getUpcomingAnime(1)}
+        linkTo="/upcoming"
+      />
+      <AnimeRow
+        title="Currently Airing"
+        queryKey={['current', 1]}
+        queryFn={() => getCurrentSeason(1)}
+        linkTo="/upcoming"
+      />
+      <AnimeRow
+        title="Top Airing Right Now"
+        queryKey={['top', 'airing', '', 1]}
+        queryFn={() => getTopAnime(1, '', 'airing')}
+        linkTo="/featured"
+      />
+      <AnimeRow
+        title="Top Rated All Time"
+        queryKey={['top', '', '', 1]}
+        queryFn={() => getTopAnime(1, '', '')}
+        linkTo="/featured"
+      />
+      <AnimeRow
+        title="Most Popular"
+        queryKey={['top', 'bypopularity', '', 1]}
+        queryFn={() => getTopAnime(1, '', 'bypopularity')}
+        linkTo="/featured"
+      />
+      <AnimeRow
+        title="Top Movies"
+        queryKey={['top', '', 'movie', 1]}
+        queryFn={() => getTopAnime(1, 'movie', '')}
+        linkTo="/featured"
+      />
+      <AnimeRow
+        title="Most Favorited"
+        queryKey={['top', 'favorite', '', 1]}
+        queryFn={() => getTopAnime(1, '', 'favorite')}
+        linkTo="/featured"
+      />
     </div>
   )
 }
