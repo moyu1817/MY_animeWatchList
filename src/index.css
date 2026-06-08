@@ -9,6 +9,17 @@
   box-shadow: 0 0 10px #10b981, 0 0 5px #10b981 !important;
 }
 
+/* Hide scrollbar but keep scroll functionality */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Fade-in page transition */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-fade { animation: fadeIn 0.2s ease-out both; }
+
 /* Light mode overrides */
 html.light body { background-color: #fafafa; }
 html.light .bg-black { background-color: #fafafa !important; }

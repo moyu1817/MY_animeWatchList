@@ -7,13 +7,14 @@ import { Navbar } from './components/Navbar'
 import { ScrollToTop } from './components/ScrollToTop'
 import { LoadingBar } from './components/LoadingBar'
 import { BackToTop } from './components/BackToTop'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
-const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
-const Featured = lazy(() => import('./pages/Featured').then(m => ({ default: m.Featured })))
-const Upcoming = lazy(() => import('./pages/Upcoming').then(m => ({ default: m.Upcoming })))
-const Seasons = lazy(() => import('./pages/Seasons').then(m => ({ default: m.Seasons })))
-const Search = lazy(() => import('./pages/Search').then(m => ({ default: m.Search })))
-const Watchlist = lazy(() => import('./pages/Watchlist').then(m => ({ default: m.Watchlist })))
+const Home       = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
+const Featured   = lazy(() => import('./pages/Featured').then(m => ({ default: m.Featured })))
+const Upcoming   = lazy(() => import('./pages/Upcoming').then(m => ({ default: m.Upcoming })))
+const Seasons    = lazy(() => import('./pages/Seasons').then(m => ({ default: m.Seasons })))
+const Search     = lazy(() => import('./pages/Search').then(m => ({ default: m.Search })))
+const Watchlist  = lazy(() => import('./pages/Watchlist').then(m => ({ default: m.Watchlist })))
 const AnimeDetail = lazy(() => import('./pages/AnimeDetail').then(m => ({ default: m.AnimeDetail })))
 
 function PageLoader() {
@@ -34,17 +35,19 @@ export default function App() {
             <ScrollToTop />
             <Navbar />
             <main>
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/featured" element={<Featured />} />
-                  <Route path="/upcoming" element={<Upcoming />} />
-                  <Route path="/seasons" element={<Seasons />} />
-                  <Route path="/search" element={<Search />} />
-                  <Route path="/watchlist" element={<Watchlist />} />
-                  <Route path="/anime/:id" element={<AnimeDetail />} />
-                </Routes>
-              </Suspense>
+              <ErrorBoundary>
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/featured" element={<Featured />} />
+                    <Route path="/upcoming" element={<Upcoming />} />
+                    <Route path="/seasons" element={<Seasons />} />
+                    <Route path="/search" element={<Search />} />
+                    <Route path="/watchlist" element={<Watchlist />} />
+                    <Route path="/anime/:id" element={<AnimeDetail />} />
+                  </Routes>
+                </Suspense>
+              </ErrorBoundary>
             </main>
             <BackToTop />
           </div>
