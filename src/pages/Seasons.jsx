@@ -41,7 +41,8 @@ export function Seasons() {
     enabled: !!selectedYear && !!selectedSeason,
   })
 
-  const items = animeData?.data ?? []
+  const seen = new Set()
+  const items = (animeData?.data ?? []).filter(a => seen.has(a.mal_id) ? false : seen.add(a.mal_id))
   const lastPage = animeData?.pagination?.last_visible_page ?? 1
   const availableYears = seasonsList ? [...new Set(seasonsList.map(s => s.year))].sort((a, b) => b - a) : []
   const availableSeasons = seasonsList?.find(s => s.year === selectedYear)?.seasons ?? []

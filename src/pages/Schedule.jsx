@@ -24,7 +24,8 @@ export function Schedule() {
     staleTime: 1000 * 60 * 30,
   })
 
-  const items = data?.data ?? []
+  const seen = new Set()
+  const items = (data?.data ?? []).filter(a => seen.has(a.mal_id) ? false : seen.add(a.mal_id))
 
   return (
     <div className="px-4 py-8 max-w-7xl mx-auto page-fade">

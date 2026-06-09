@@ -38,7 +38,8 @@ export function Featured() {
     },
   })
 
-  const items = data?.pages.flatMap(p => p.data) ?? []
+  const seen = new Set()
+  const items = (data?.pages.flatMap(p => p.data) ?? []).filter(a => seen.has(a.mal_id) ? false : seen.add(a.mal_id))
   const sentinelRef = useInfiniteScroll(fetchNextPage, hasNextPage && !isFetchingNextPage)
 
   return (

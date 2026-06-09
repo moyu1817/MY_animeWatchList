@@ -49,7 +49,8 @@ export function Upcoming() {
     },
   })
 
-  const allItems = data?.pages.flatMap(p => p.data) ?? []
+  const seen = new Set()
+  const allItems = (data?.pages.flatMap(p => p.data) ?? []).filter(a => seen.has(a.mal_id) ? false : seen.add(a.mal_id))
   const items = allItems.filter(a => type === 'All' || a.type === type)
   const sentinelRef = useInfiniteScroll(fetchNextPage, hasNextPage && !isFetchingNextPage)
 

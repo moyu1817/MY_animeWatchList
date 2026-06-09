@@ -9,7 +9,8 @@ import { usePageTitle } from '../hooks/usePageTitle'
 
 function AnimeRow({ title, queryKey, queryFn, linkTo }) {
   const { data, isLoading, isError, refetch, isFetching } = useQuery({ queryKey, queryFn })
-  const items = data?.data?.slice(0, 15) ?? []
+  const seen = new Set()
+  const items = (data?.data ?? []).filter(a => seen.has(a.mal_id) ? false : seen.add(a.mal_id)).slice(0, 15)
   const rowRef = useRef(null)
 
   function scroll(dir) {
