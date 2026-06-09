@@ -259,7 +259,7 @@ export function AnimeDetail() {
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {recommendations.slice(0, 20).map(({ entry, votes }) => (
-                  <div key={entry.mal_id} className="relative">
+                  <div key={entry.mal_id} className="relative flex flex-col">
                     <AnimeCard anime={{ ...entry, title: entry.title, images: entry.images }} />
                     {votes > 0 && <span className="absolute top-2 right-2 bg-black/80 text-emerald-400 text-xs px-1.5 py-0.5 rounded">{votes}</span>}
                   </div>

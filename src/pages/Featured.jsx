@@ -74,7 +74,7 @@ export function Featured() {
         {isLoading
           ? Array.from({ length: 20 }).map((_, i) => <SkeletonCard key={i} />)
           : items.map((anime, i) => (
-            <div key={`${anime.mal_id}-${i}`} className="relative">
+            <div key={`${anime.mal_id}-${i}`} className="relative flex flex-col">
               {i < 3 && (
                 <span className={`absolute top-2 left-2 z-10 text-xs font-bold px-1.5 py-0.5 rounded ${
                   i === 0 ? 'bg-emerald-400 text-black' :

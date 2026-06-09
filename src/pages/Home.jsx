@@ -52,7 +52,7 @@ function AnimeRow({ title, queryKey, queryFn, linkTo }) {
               </div>
             ))
             : items.map(anime => (
-              <div key={anime.mal_id} className="w-40 shrink-0">
+              <div key={anime.mal_id} className="w-40 shrink-0 flex flex-col">
                 <AnimeCard anime={anime} />
               </div>
             ))
@@ -118,7 +118,7 @@ export function Home() {
             </div>
             <div ref={recentRef} className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
               {recentlyViewed.slice(0, 10).map(anime => (
-                <div key={anime.mal_id} className="w-40 shrink-0">
+                <div key={anime.mal_id} className="w-40 shrink-0 flex flex-col">
                   <AnimeCard anime={anime} />
                 </div>
               ))}
