@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
@@ -77,13 +77,13 @@ export function Upcoming() {
         {isGenreFilter && (
           <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm px-3 py-1.5 rounded-md">
             <span>Genre: {genreName}</span>
-            <button onClick={clearGenre} className="hover:text-white transition-colors leading-none cursor-pointer ml-1">×</button>
+            <button onClick={clearGenre} className="hover:text-white transition-colors leading-none cursor-pointer ml-1">Ã—</button>
           </div>
         )}
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-4">
         {isLoading
           ? Array.from({ length: 20 }).map((_, i) => <SkeletonCard key={i} />)
           : items.map((anime, i) => <AnimeCard key={`${anime.mal_id}-${i}`} anime={anime} />)
@@ -108,3 +108,4 @@ export function Upcoming() {
     </div>
   )
 }
+

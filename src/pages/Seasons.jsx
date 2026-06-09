@@ -1,11 +1,11 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
 import { getSeasonsList, getSeasonAnime } from '../services/jikanApi'
 import { usePageTitle } from '../hooks/usePageTitle'
 
-const SEASON_ICONS = { winter: '❄️', spring: '🌸', summer: '☀️', fall: '🍂' }
+const SEASON_ICONS = { winter: 'â„ï¸', spring: 'ðŸŒ¸', summer: 'â˜€ï¸', fall: 'ðŸ‚' }
 
 function getCurrentSeason() {
   const m = new Date().getMonth()
@@ -120,7 +120,7 @@ export function Seasons() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-8">
         {loadingAnime
           ? Array.from({ length: 20 }).map((_, i) => <SkeletonCard key={i} />)
           : items.map(anime => <AnimeCard key={anime.mal_id} anime={anime} />)
@@ -133,11 +133,12 @@ export function Seasons() {
 
       {!loadingAnime && items.length > 0 && (
         <div className="flex justify-center items-center gap-3">
-          <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className={paginationBtn}>← Prev</button>
+          <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className={paginationBtn}>â† Prev</button>
           <span className="text-zinc-500 text-sm">Page {page} of {lastPage}</span>
-          <button onClick={() => setPage(p => Math.min(lastPage, p + 1))} disabled={page === lastPage} className={paginationBtn}>Next →</button>
+          <button onClick={() => setPage(p => Math.min(lastPage, p + 1))} disabled={page === lastPage} className={paginationBtn}>Next â†’</button>
         </div>
       )}
     </div>
   )
 }
+
