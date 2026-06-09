@@ -80,7 +80,7 @@ export function Home() {
       <div className="px-4 max-w-7xl mx-auto mb-10">
         <div className="relative rounded-xl overflow-hidden h-64 md:h-80 flex items-end bg-zinc-950 border border-zinc-900">
           {featured && (
-            <img src={featured.images?.jpg?.large_image_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+            <img src={featured.images?.jpg?.large_image_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-35" />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
           <div className="relative p-6 md:p-10">
@@ -111,10 +111,12 @@ export function Home() {
           <section className="mb-10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-semibold text-white">Continue Browsing</h2>
-              <div className="flex gap-1">
-                <button onClick={() => recentRef.current?.scrollBy({ left: -700, behavior: 'smooth' })} className="w-7 h-7 flex items-center justify-center rounded border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer text-xs">‹</button>
-                <button onClick={() => recentRef.current?.scrollBy({ left: 700, behavior: 'smooth' })}  className="w-7 h-7 flex items-center justify-center rounded border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer text-xs">›</button>
-              </div>
+              {recentlyViewed.length > 5 && (
+                <div className="flex gap-1">
+                  <button onClick={() => recentRef.current?.scrollBy({ left: -700, behavior: 'smooth' })} className="w-7 h-7 flex items-center justify-center rounded border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer text-xs">‹</button>
+                  <button onClick={() => recentRef.current?.scrollBy({ left: 700, behavior: 'smooth' })}  className="w-7 h-7 flex items-center justify-center rounded border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer text-xs">›</button>
+                </div>
+              )}
             </div>
             <div ref={recentRef} className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
               {recentlyViewed.slice(0, 10).map(anime => (

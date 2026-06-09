@@ -17,8 +17,8 @@ const SORT_OPTIONS = [
 
 function RatingPicker({ value, onChange }) {
   return (
-    <div className="flex items-center gap-1 shrink-0">
-      <span className="text-zinc-600 text-xs">★</span>
+    <div className="flex items-center gap-1.5 shrink-0">
+      <span className="text-zinc-600 text-xs">Rate</span>
       <select
         value={value ?? ''}
         onChange={e => onChange(e.target.value ? Number(e.target.value) : null)}

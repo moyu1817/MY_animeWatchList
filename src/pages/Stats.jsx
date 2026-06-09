@@ -153,7 +153,7 @@ export function Stats() {
                   Added {new Date(anime.addedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
               </div>
-              <span className="text-xs text-zinc-600 shrink-0 capitalize">{anime.status?.replace(/_/g, ' ')}</span>
+              <span className="text-xs text-zinc-600 shrink-0">{STATUS_LABELS[anime.status] ?? anime.status}</span>
             </Link>
           ))}
         </div>
