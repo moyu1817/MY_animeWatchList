@@ -46,14 +46,36 @@ export function Watchlist() {
   usePageTitle('My Watchlist')
   const { watchlist, removeAnime, updateStatus, updateRating } = useWatchlist()
   const [sortBy, setSortBy] = useState('date')
+  const [search, setSearch] = useState('')
+  const [confirmId, setConfirmId] = useState(null)
+
+  function handleRemove(mal_id) {
+    if (confirmId === mal_id) {
+      removeAnime(mal_id)
+      setConfirmId(null)
+    } else {
+      setConfirmId(mal_id)
+      setTimeout(() => setConfirmId(id => id === mal_id ? null : id), 3000)
+    }
+  }
+
+  function handleExport() {
+    const blob = new Blob([JSON.stringify(watchlist, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'my-watchlist.json'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
   if (watchlist.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-32 text-center px-4">
         <p className="text-zinc-400 text-lg mb-2">Your watchlist is empty.</p>
         <p className="text-zinc-700 text-sm mb-6">Start adding anime you want to watch!</p>
-        <Link to="/upcoming" className="bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-2 rounded-md text-sm font-semibold transition-colors">
-          Browse Upcoming Anime
+        <Link to="/featured" className="bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-2 rounded-md text-sm font-semibold transition-colors">
+          Discover Anime
         </Link>
       </div>
     )
@@ -68,7 +90,7 @@ export function Watchlist() {
 
   return (
     <div className="px-4 py-8 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold text-white">My Watchlist</h1>
         <div className="flex items-center gap-3">
           <span className="text-zinc-600 text-sm">{watchlist.length} titles</span>
@@ -79,8 +101,19 @@ export function Watchlist() {
           >
             {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
+          <button onClick={handleExport} className="border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 text-xs px-2.5 py-1.5 rounded-md transition-colors cursor-pointer shrink-0">
+            Export
+          </button>
         </div>
       </div>
+
+      <input
+        type="text"
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        placeholder="Filter by title..."
+        className="w-full sm:w-72 bg-zinc-900 border border-zinc-800 text-white text-sm rounded-md px-3 py-2 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition-colors mb-6"
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8 bg-zinc-900 border border-zinc-800 rounded-md p-4">
@@ -97,7 +130,8 @@ export function Watchlist() {
       </div>
 
       {STATUSES.map(status => {
-        const group = sortGroup(watchlist.filter(a => a.status === status), sortBy)
+        const base = search.trim() ? watchlist.filter(a => a.title?.toLowerCase().includes(search.toLowerCase().trim())) : watchlist
+        const group = sortGroup(base.filter(a => a.status === status), sortBy)
         if (group.length === 0) return null
         return (
           <section key={status} className="mb-8">
@@ -128,7 +162,13 @@ export function Watchlist() {
                   >
                     {STATUSES.map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
                   </select>
-                  <button onClick={() => removeAnime(anime.mal_id)} className="text-zinc-700 hover:text-red-400 transition-colors text-xl leading-none shrink-0 cursor-pointer" title="Remove">×</button>
+                  <button
+                    onClick={() => handleRemove(anime.mal_id)}
+                    className={`text-xs font-medium shrink-0 cursor-pointer transition-colors px-2 py-1 rounded ${confirmId === anime.mal_id ? 'text-red-400 border border-red-500/40 hover:bg-red-500/10' : 'text-zinc-700 hover:text-red-400'}`}
+                    title="Remove"
+                  >
+                    {confirmId === anime.mal_id ? 'Sure?' : '×'}
+                  </button>
                 </div>
               ))}
             </div>

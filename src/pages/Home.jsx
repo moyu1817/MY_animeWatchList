@@ -38,23 +38,27 @@ function AnimeRow({ title, queryKey, queryFn, linkTo }) {
         </div>
       </div>
 
-      <div ref={rowRef} className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
-        {isLoading || isFetching && items.length === 0
-          ? Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="w-40 shrink-0"><SkeletonCard /></div>
-          ))
-          : isError && items.length === 0
-          ? Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="w-40 shrink-0 bg-zinc-900 border border-zinc-800 rounded-md aspect-[3/4] flex items-center justify-center">
-              <span className="text-zinc-700 text-xs">—</span>
-            </div>
-          ))
-          : items.map(anime => (
-            <div key={anime.mal_id} className="w-40 shrink-0">
-              <AnimeCard anime={anime} />
-            </div>
-          ))
-        }
+      {/* Right-edge fade indicates more content */}
+      <div className="relative">
+        <div ref={rowRef} className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
+          {isLoading || (isFetching && items.length === 0)
+            ? Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="w-40 shrink-0"><SkeletonCard /></div>
+            ))
+            : isError && items.length === 0
+            ? Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="w-40 shrink-0 bg-zinc-900 border border-zinc-800 rounded-md aspect-[3/4] flex items-center justify-center">
+                <span className="text-zinc-700 text-xs">—</span>
+              </div>
+            ))
+            : items.map(anime => (
+              <div key={anime.mal_id} className="w-40 shrink-0">
+                <AnimeCard anime={anime} />
+              </div>
+            ))
+          }
+        </div>
+        <div className="absolute top-0 right-0 h-full w-16 bg-gradient-to-l from-black to-transparent pointer-events-none" />
       </div>
     </section>
   )
@@ -67,6 +71,7 @@ export function Home() {
   })
   const featured = upcomingData?.data?.[0]
   const { recentlyViewed } = useRecentlyViewed()
+  const recentRef = useRef(null)
   usePageTitle('Home')
 
   return (
@@ -104,8 +109,14 @@ export function Home() {
 
         {recentlyViewed.length > 0 && (
           <section className="mb-10">
-            <h2 className="text-base font-semibold text-white mb-4">Continue Browsing</h2>
-            <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-semibold text-white">Continue Browsing</h2>
+              <div className="flex gap-1">
+                <button onClick={() => recentRef.current?.scrollBy({ left: -700, behavior: 'smooth' })} className="w-7 h-7 flex items-center justify-center rounded border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer text-xs">‹</button>
+                <button onClick={() => recentRef.current?.scrollBy({ left: 700, behavior: 'smooth' })}  className="w-7 h-7 flex items-center justify-center rounded border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer text-xs">›</button>
+              </div>
+            </div>
+            <div ref={recentRef} className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
               {recentlyViewed.slice(0, 10).map(anime => (
                 <div key={anime.mal_id} className="w-40 shrink-0">
                   <AnimeCard anime={anime} />

@@ -66,7 +66,7 @@ export function Navbar() {
         <Link to="/" className="text-xl font-bold text-emerald-400 mr-2 shrink-0">MoMoAnime!</Link>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-5">
+        <div className="hidden lg:flex items-center gap-5">
           <NavLink to="/" end className={linkClass}>Home</NavLink>
           <NavLink to="/featured" className={linkClass}>Featured</NavLink>
           <NavLink to="/upcoming" className={linkClass}>Upcoming</NavLink>
@@ -82,7 +82,7 @@ export function Navbar() {
         </div>
 
         {/* Desktop right side */}
-        <div className="hidden md:flex items-center gap-2 ml-auto">
+        <div className="hidden lg:flex items-center gap-2 ml-auto">
           <button
             onClick={handleRandom}
             disabled={loadingRandom}
@@ -142,7 +142,7 @@ export function Navbar() {
         </div>
 
         {/* Mobile right side */}
-        <div className="flex md:hidden items-center gap-2 ml-auto">
+        <div className="flex lg:hidden items-center gap-2 ml-auto">
           <ThemeToggle />
           <button
             onClick={() => setMobileOpen(true)}

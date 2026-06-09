@@ -48,8 +48,8 @@ export function Stats() {
 
   // Rating distribution
   const ratingDist = Array.from({ length: 10 }, (_, i) => ({
-    score: i + 1,
-    count: watchlist.filter(a => a.rating === i + 1).length,
+    score: 10 - i,
+    count: watchlist.filter(a => a.rating === 10 - i).length,
   }))
   const maxRating = Math.max(...ratingDist.map(r => r.count), 1)
 
@@ -66,7 +66,7 @@ export function Stats() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
         <StatCard label="Total Anime" value={total} />
         <StatCard label="Completed" value={completed.length} sub={`${completionRate}% completion`} />
-        <StatCard label="Episodes Watched" value={totalEpisodes.toLocaleString()} sub={`~${estimatedHours} hrs / ${estimatedDays} days`} />
+        <StatCard label="Episodes Watched" value={completed.length > 0 ? totalEpisodes.toLocaleString() : '—'} sub={completed.length > 0 ? `~${estimatedHours} hrs / ${estimatedDays} days` : 'no completed anime yet'} />
         <StatCard label="Mean Score" value={avgRating ?? '—'} sub={rated.length ? `from ${rated.length} rated` : 'none rated yet'} />
       </div>
 

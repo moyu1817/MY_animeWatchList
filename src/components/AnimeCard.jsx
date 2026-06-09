@@ -9,7 +9,7 @@ export function AnimeCard({ anime }) {
   return (
     <div className="bg-zinc-900 rounded-md overflow-hidden border border-zinc-800 transition-transform duration-150 hover:scale-105 hover:border-emerald-500/30 flex flex-col relative">
       {isAiring && (
-        <span className="absolute top-2 left-2 z-10 bg-emerald-500 text-black text-xs font-bold px-1.5 py-0.5 rounded">
+        <span className="absolute top-2 right-2 z-10 bg-emerald-500 text-black text-xs font-bold px-1.5 py-0.5 rounded">
           Airing
         </span>
       )}

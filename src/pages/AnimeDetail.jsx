@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getAnimeById, getAnimeCharacters, getAnimeRecommendations, getAnimeNews } from '../services/jikanApi'
 import { WatchlistButton } from '../components/WatchlistButton'
@@ -10,11 +10,37 @@ import { usePageTitle } from '../hooks/usePageTitle'
 
 const TABS = ['Overview', 'Characters', 'Recommendations', 'News']
 
+function TrailerEmbed({ embedUrl, title }) {
+  const [playing, setPlaying] = useState(false)
+  const videoId = embedUrl.match(/\/embed\/([^?/]+)/)?.[1]
+  const thumbnail = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null
+  const src = playing ? `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}autoplay=1` : embedUrl
+
+  if (!thumbnail || playing) {
+    return <iframe src={src} title={`${title} trailer`} className="w-full h-full" allowFullScreen />
+  }
+
+  return (
+    <div className="relative w-full h-full cursor-pointer group" onClick={() => setPlaying(true)}>
+      <img src={thumbnail} alt={`${title} trailer`} className="w-full h-full object-cover" />
+      <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/25 transition-colors">
+        <div className="w-14 h-14 rounded-full bg-black/70 border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+            <polygon points="5,3 19,12 5,21"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function AnimeDetail() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [tab, setTab] = useState('Overview')
   const [showTrailer, setShowTrailer] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [expanded, setExpanded] = useState(false)
   const { addToRecent } = useRecentlyViewed()
   const { data: anime, isLoading, isError } = useQuery({
     queryKey: ['anime', id],
@@ -40,7 +66,7 @@ export function AnimeDetail() {
 
   useEffect(() => {
     if (anime) addToRecent(anime)
-  }, [anime])
+  }, [anime, addToRecent])
 
   function handleShare() {
     navigator.clipboard.writeText(window.location.href)
@@ -92,12 +118,12 @@ export function AnimeDetail() {
           className="absolute inset-0 w-full h-full object-cover scale-110"
           style={{ filter: 'blur(22px) brightness(0.25)' }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/75 to-black/30" />
       </div>
 
       {/* Content overlapping banner */}
       <div className="px-4 max-w-5xl mx-auto -mt-36 relative pb-10">
-        <Link to="/" className="text-zinc-500 hover:text-white text-sm mb-6 inline-block transition-colors">← Back</Link>
+        <button onClick={() => navigate(-1)} className="text-zinc-500 hover:text-white text-sm mb-6 inline-block transition-colors cursor-pointer">← Back</button>
 
         <div className="flex flex-col sm:flex-row gap-6">
           {/* Poster */}
@@ -143,12 +169,26 @@ export function AnimeDetail() {
             {anime.genres?.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-4">
                 {anime.genres.map(g => (
-                  <span key={g.mal_id} className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-md text-xs">{g.name}</span>
+                  <Link key={g.mal_id} to={`/upcoming?genre_id=${g.mal_id}&genre=${encodeURIComponent(g.name)}`} className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-md text-xs hover:bg-emerald-500/20 transition-colors">{g.name}</Link>
                 ))}
               </div>
             )}
 
-            {anime.synopsis && <p className="text-zinc-400 text-sm leading-relaxed mb-4 line-clamp-4">{anime.synopsis}</p>}
+            {anime.synopsis && (
+              <div className="mb-4">
+                <p className={`text-zinc-400 text-sm leading-relaxed ${!expanded ? 'line-clamp-4' : ''}`}>
+                  {anime.synopsis}
+                </p>
+                {anime.synopsis.length > 300 && (
+                  <button
+                    onClick={() => setExpanded(v => !v)}
+                    className="text-emerald-400 text-xs mt-1.5 cursor-pointer hover:text-emerald-300 transition-colors"
+                  >
+                    {expanded ? 'Show less ↑' : 'Read more ↓'}
+                  </button>
+                )}
+              </div>
+            )}
 
             <div className="space-y-1 text-sm">
               {anime.studios?.length > 0 && <p className="text-zinc-600">Studio: <span className="text-zinc-300">{anime.studios.map(s => s.name).join(', ')}</span></p>}
@@ -181,7 +221,7 @@ export function AnimeDetail() {
               <button onClick={() => setShowTrailer(true)} className="text-emerald-400 hover:text-emerald-300 text-sm cursor-pointer transition-colors">Open fullscreen ↗</button>
             </div>
             <div className="aspect-video rounded-xl overflow-hidden max-w-2xl border border-zinc-900">
-              <iframe src={anime.trailer.embed_url} title={`${title} trailer`} className="w-full h-full" allowFullScreen />
+              <TrailerEmbed embedUrl={anime.trailer.embed_url} title={title} />
             </div>
           </div>
         )}

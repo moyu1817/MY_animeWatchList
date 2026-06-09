@@ -1,10 +1,11 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
 import { useDebounce } from '../hooks/useDebounce'
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
-import { getUpcomingAnime, searchAnime } from '../services/jikanApi'
+import { getUpcomingAnime, searchAnime, searchAllAnime } from '../services/jikanApi'
 import { usePageTitle } from '../hooks/usePageTitle'
 
 const TYPES = ['All', 'TV', 'Movie', 'OVA', 'ONA', 'Special']
@@ -17,14 +18,30 @@ export function Upcoming() {
   usePageTitle('Upcoming Anime')
   const [search, setSearch] = useState('')
   const [type, setType] = useState('All')
+  const [searchParams, setSearchParams] = useSearchParams()
   const debouncedSearch = useDebounce(search, 400)
   const isSearching = debouncedSearch.trim().length > 0
+  const genreId = searchParams.get('genre_id')
+  const genreName = searchParams.get('genre')
+  const isGenreFilter = !!genreId && !isSearching
+
+  function clearGenre() {
+    searchParams.delete('genre_id')
+    searchParams.delete('genre')
+    setSearchParams(searchParams)
+  }
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
-    queryKey: isSearching ? ['upcoming-search', debouncedSearch] : ['upcoming-infinite'],
-    queryFn: ({ pageParam }) => isSearching
-      ? searchAnime(debouncedSearch, pageParam)
-      : getUpcomingAnime(pageParam),
+    queryKey: isSearching
+      ? ['upcoming-search', debouncedSearch]
+      : isGenreFilter
+        ? ['upcoming-genre', genreId]
+        : ['upcoming-infinite'],
+    queryFn: ({ pageParam }) => {
+      if (isSearching) return searchAnime(debouncedSearch, pageParam)
+      if (isGenreFilter) return searchAllAnime('', pageParam, '', 'upcoming', genreId)
+      return getUpcomingAnime(pageParam)
+    },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const { current_page, last_visible_page } = lastPage.pagination ?? {}
@@ -56,6 +73,12 @@ export function Upcoming() {
             </button>
           ))}
         </div>
+        {isGenreFilter && (
+          <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm px-3 py-1.5 rounded-md">
+            <span>Genre: {genreName}</span>
+            <button onClick={clearGenre} className="hover:text-white transition-colors leading-none cursor-pointer ml-1">×</button>
+          </div>
+        )}
       </div>
 
       {/* Grid */}
