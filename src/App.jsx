@@ -38,6 +38,10 @@ function KeyboardShortcuts() {
   return null
 }
 
+function Page({ children }) {
+  return <ErrorBoundary>{children}</ErrorBoundary>
+}
+
 export default function App() {
   return (
     <ThemeProvider>
@@ -49,21 +53,19 @@ export default function App() {
             <KeyboardShortcuts />
             <Navbar />
             <main>
-              <ErrorBoundary>
-                <Suspense fallback={<PageLoader />}>
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/featured" element={<Featured />} />
-                    <Route path="/upcoming" element={<Upcoming />} />
-                    <Route path="/seasons" element={<Seasons />} />
-                    <Route path="/schedule" element={<Schedule />} />
-                    <Route path="/search" element={<Search />} />
-                    <Route path="/watchlist" element={<Watchlist />} />
-                    <Route path="/stats" element={<Stats />} />
-                    <Route path="/anime/:id" element={<AnimeDetail />} />
-                  </Routes>
-                </Suspense>
-              </ErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/" element={<Page><Home /></Page>} />
+                  <Route path="/featured" element={<Page><Featured /></Page>} />
+                  <Route path="/upcoming" element={<Page><Upcoming /></Page>} />
+                  <Route path="/seasons" element={<Page><Seasons /></Page>} />
+                  <Route path="/schedule" element={<Page><Schedule /></Page>} />
+                  <Route path="/search" element={<Page><Search /></Page>} />
+                  <Route path="/watchlist" element={<Page><Watchlist /></Page>} />
+                  <Route path="/stats" element={<Page><Stats /></Page>} />
+                  <Route path="/anime/:id" element={<Page><AnimeDetail /></Page>} />
+                </Routes>
+              </Suspense>
             </main>
             <BackToTop />
           </div>
