@@ -24,27 +24,25 @@ export function AnimeCard({ anime }) {
           onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = IMG_FALLBACK }}
         />
       </Link>
-      <div className="p-3 flex flex-col h-32 overflow-hidden">
+      <div className="p-3 h-32 grid grid-rows-[auto_1fr_auto] overflow-hidden">
         <Link
           to={`/anime/${anime.mal_id}`}
-          className="font-medium text-sm text-white hover:text-emerald-400 line-clamp-2 transition-colors shrink-0"
+          className="font-medium text-sm text-white hover:text-emerald-400 line-clamp-2 transition-colors"
         >
           {title}
         </Link>
-        <div className="text-xs text-zinc-600 flex gap-2 flex-wrap shrink-0 mt-1">
+        <div className="self-end pb-1.5 text-xs text-zinc-600 flex gap-2 flex-wrap">
           {anime.type && <span>{anime.type}</span>}
           {!!anime.episodes && <span>{anime.episodes} eps</span>}
           {anime.score && <span className="text-emerald-500">★ {anime.score}</span>}
         </div>
-        <div className="mt-auto pt-1.5">
-          <WatchlistButton anime={{
-            mal_id: anime.mal_id,
-            title,
-            image_url: image,
-            score: anime.score ?? null,
-            episodes: anime.episodes ?? null,
-          }} />
-        </div>
+        <WatchlistButton anime={{
+          mal_id: anime.mal_id,
+          title,
+          image_url: image,
+          score: anime.score ?? null,
+          episodes: anime.episodes ?? null,
+        }} />
       </div>
     </div>
   )
