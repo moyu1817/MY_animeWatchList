@@ -19,6 +19,7 @@ const Search      = lazy(() => import('./pages/Search').then(m => ({ default: m.
 const Watchlist   = lazy(() => import('./pages/Watchlist').then(m => ({ default: m.Watchlist })))
 const Stats       = lazy(() => import('./pages/Stats').then(m => ({ default: m.Stats })))
 const AnimeDetail = lazy(() => import('./pages/AnimeDetail').then(m => ({ default: m.AnimeDetail })))
+const NotFound    = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })))
 
 function PageLoader() {
   return (
@@ -64,6 +65,7 @@ export default function App() {
                   <Route path="/watchlist" element={<Page><Watchlist /></Page>} />
                   <Route path="/stats" element={<Page><Stats /></Page>} />
                   <Route path="/anime/:id" element={<Page><AnimeDetail /></Page>} />
+                  <Route path="*" element={<Page><NotFound /></Page>} />
                 </Routes>
               </Suspense>
             </main>

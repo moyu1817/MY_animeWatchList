@@ -42,7 +42,7 @@ export function Featured() {
   const sentinelRef = useInfiniteScroll(fetchNextPage, hasNextPage && !isFetchingNextPage)
 
   return (
-    <div className="px-4 py-8 max-w-7xl mx-auto">
+    <div className="px-4 py-8 max-w-7xl mx-auto page-fade">
       <h1 className="text-xl font-bold text-white mb-6">Featured Anime</h1>
 
       {/* Tabs */}
@@ -76,10 +76,10 @@ export function Featured() {
           : items.map((anime, i) => (
             <div key={`${anime.mal_id}-${i}`} className="relative flex flex-col">
               {i < 3 && (
-                <span className={`absolute top-2 left-2 z-10 text-xs font-bold px-1.5 py-0.5 rounded ${
-                  i === 0 ? 'bg-emerald-400 text-black' :
+                <span className={`absolute top-2 left-2 z-10 text-xs font-bold px-2 py-0.5 rounded-full ${
+                  i === 0 ? 'bg-yellow-400 text-black' :
                   i === 1 ? 'bg-zinc-300 text-black' :
-                  'bg-zinc-500 text-white'
+                  'bg-amber-600 text-white'
                 }`}>
                   #{i + 1}
                 </span>

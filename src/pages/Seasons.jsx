@@ -58,7 +58,7 @@ export function Seasons() {
   const orderedSeasons = [currentSeason, ...['winter', 'spring', 'summer', 'fall'].filter(s => s !== currentSeason)]
 
   return (
-    <div className="px-4 py-8 max-w-7xl mx-auto">
+    <div className="px-4 py-8 max-w-7xl mx-auto page-fade">
       <h1 className="text-xl font-bold text-white mb-6">Season Archive</h1>
 
       <div className="flex flex-wrap items-end gap-6 mb-8">

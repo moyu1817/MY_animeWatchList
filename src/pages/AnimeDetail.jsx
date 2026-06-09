@@ -123,7 +123,7 @@ export function AnimeDetail() {
 
       {/* Content overlapping banner */}
       <div className="px-4 max-w-5xl mx-auto -mt-36 relative pb-10">
-        <button onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/')} className="text-zinc-500 hover:text-white text-sm mb-6 inline-block transition-colors cursor-pointer">← Back</button>
+        <button onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/')} className="flex items-center gap-1.5 text-zinc-400 hover:text-white text-sm mb-6 border border-zinc-700/60 hover:border-zinc-500 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-md transition-colors cursor-pointer">← Back</button>
 
         <div className="flex flex-col sm:flex-row gap-6">
           {/* Poster */}
@@ -131,7 +131,8 @@ export function AnimeDetail() {
             <img
               src={image}
               alt={title}
-              className="w-44 rounded-md border border-zinc-800 shadow-2xl shadow-black"
+              className="w-44 rounded-md border border-zinc-800 shadow-2xl shadow-black bg-zinc-900"
+              onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='3' height='4' fill='%2318181b'/%3E%3C/svg%3E" }}
             />
             <div className="mt-3 w-44 space-y-2">
               <WatchlistButton anime={{ mal_id: anime.mal_id, title, image_url: image, score: anime.score ?? null, episodes: anime.episodes ?? null }} />
@@ -237,7 +238,7 @@ export function AnimeDetail() {
                   const jpVA = voice_actors?.find(v => v.language === 'Japanese')
                   return (
                     <div key={character.mal_id} className="bg-zinc-900 border border-zinc-800 rounded-md overflow-hidden flex gap-3 p-3 items-start">
-                      <img src={character.images?.jpg?.image_url} alt={character.name} className="w-12 h-16 object-cover rounded shrink-0" />
+                      <img src={character.images?.jpg?.image_url} alt={character.name} className="w-12 h-16 object-cover rounded shrink-0 bg-zinc-800" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='3' height='4' fill='%2318181b'/%3E%3C/svg%3E" }} />
                       <div className="min-w-0">
                         <p className="text-white text-xs font-medium truncate">{character.name}</p>
                         <p className="text-zinc-600 text-xs mt-0.5">{role}</p>

@@ -127,7 +127,7 @@ export function Stats() {
                 to={`/anime/${anime.mal_id}`}
                 className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-md p-3 hover:border-emerald-500/30 transition-colors"
               >
-                <img src={anime.image_url} alt={anime.title} className="w-8 h-11 object-cover rounded shrink-0" />
+                <img src={anime.image_url} alt={anime.title} className="w-8 h-11 object-cover rounded shrink-0 bg-zinc-800" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 11'%3E%3Crect width='8' height='11' fill='%2318181b'/%3E%3C/svg%3E" }} />
                 <p className="text-white text-sm truncate flex-1">{anime.title}</p>
                 {anime.score && <span className="text-emerald-500 text-xs shrink-0">★ {anime.score}</span>}
               </Link>
@@ -137,7 +137,7 @@ export function Stats() {
       )}
 
       {/* Recently added */}
-      <div>
+      <div className="mb-10">
         <h2 className="text-base font-semibold text-white mb-4">Recently Added</h2>
         <div className="space-y-2">
           {recentlyAdded.map(anime => (
@@ -146,7 +146,7 @@ export function Stats() {
               to={`/anime/${anime.mal_id}`}
               className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-md p-3 hover:border-emerald-500/30 transition-colors"
             >
-              <img src={anime.image_url} alt={anime.title} className="w-8 h-11 object-cover rounded shrink-0" />
+              <img src={anime.image_url} alt={anime.title} className="w-8 h-11 object-cover rounded shrink-0 bg-zinc-800" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 11'%3E%3Crect width='8' height='11' fill='%2318181b'/%3E%3C/svg%3E" }} />
               <div className="flex-1 min-w-0">
                 <p className="text-white text-sm truncate">{anime.title}</p>
                 <p className="text-zinc-600 text-xs mt-0.5">
@@ -156,6 +156,19 @@ export function Stats() {
               <span className="text-xs text-zinc-600 shrink-0 capitalize">{anime.status?.replace(/_/g, ' ')}</span>
             </Link>
           ))}
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div className="mt-4 pt-8 border-t border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p className="text-zinc-600 text-sm">Keep tracking your anime journey</p>
+        <div className="flex gap-2">
+          <Link to="/watchlist" className="border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600 px-4 py-2 rounded-md text-sm transition-colors">
+            Manage Watchlist
+          </Link>
+          <Link to="/upcoming" className="bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-2 rounded-md text-sm font-semibold transition-colors">
+            Discover Anime
+          </Link>
         </div>
       </div>
     </div>

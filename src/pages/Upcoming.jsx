@@ -54,7 +54,7 @@ export function Upcoming() {
   const sentinelRef = useInfiniteScroll(fetchNextPage, hasNextPage && !isFetchingNextPage)
 
   return (
-    <div className="px-4 py-8 max-w-7xl mx-auto">
+    <div className="px-4 py-8 max-w-7xl mx-auto page-fade">
       <h1 className="text-xl font-bold text-white mb-6">Upcoming Anime</h1>
 
       {/* Filters */}
@@ -90,7 +90,13 @@ export function Upcoming() {
         {isFetchingNextPage && Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={`next-${i}`} />)}
       </div>
 
-      {!isLoading && items.length === 0 && (
+      {!isLoading && allItems.length > 0 && items.length === 0 && (
+        <p className="text-center text-zinc-600 py-12">
+          No {type} in the loaded results.{hasNextPage ? ' Scroll to load more, or ' : ' '}
+          <button onClick={() => setType('All')} className="text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer">clear the filter</button>.
+        </p>
+      )}
+      {!isLoading && allItems.length === 0 && (
         <p className="text-center text-zinc-600 py-12">No anime found.</p>
       )}
 

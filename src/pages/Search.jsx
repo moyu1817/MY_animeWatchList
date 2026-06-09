@@ -72,7 +72,7 @@ export function Search() {
 
   if (!hasFilter) {
     return (
-      <div className="px-4 py-8 max-w-7xl mx-auto">
+      <div className="px-4 py-8 max-w-7xl mx-auto page-fade">
         <h1 className="text-xl font-bold text-white mb-2">Browse by Category</h1>
         <p className="text-zinc-600 text-sm mb-6">Select a genre or type in the search bar.</p>
         <div className="flex flex-wrap gap-2">
@@ -101,7 +101,7 @@ export function Search() {
   }
 
   return (
-    <div className="px-4 py-8 max-w-7xl mx-auto">
+    <div className="px-4 py-8 max-w-7xl mx-auto page-fade">
       <div className="mb-6">
         <h1 className="text-xl font-bold text-white">
           {urlQuery
@@ -159,6 +159,14 @@ export function Search() {
               <button key={s.value} onClick={() => setFilter(setStatus)(s.value)} className={`${btnBase} ${status === s.value ? btnActive : btnInactive}`}>{s.label}</button>
             ))}
           </div>
+          {(type !== 'All' || status !== '' || genre !== null) && (
+            <button
+              onClick={() => { setType('All'); setStatus(''); setGenre(null); setPage(1) }}
+              className="px-3 py-1 rounded-md text-sm text-zinc-500 hover:text-white border border-zinc-800 hover:border-zinc-600 bg-zinc-900 transition-colors cursor-pointer self-center"
+            >
+              Clear filters ×
+            </button>
+          )}
         </div>
       </div>
 

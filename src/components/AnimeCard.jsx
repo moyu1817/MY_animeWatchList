@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { WatchlistButton } from './WatchlistButton'
 
+const IMG_FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='3' height='4' fill='%2318181b'/%3E%3C/svg%3E"
+
 export function AnimeCard({ anime }) {
   const image = anime.images?.jpg?.large_image_url ?? anime.images?.jpg?.image_url
   const title = anime.title_english ?? anime.title
@@ -19,6 +21,7 @@ export function AnimeCard({ anime }) {
           alt={title}
           className="w-full aspect-[3/4] object-cover"
           loading="lazy"
+          onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = IMG_FALLBACK }}
         />
       </Link>
       <div className="p-3 flex flex-col h-32 overflow-hidden">

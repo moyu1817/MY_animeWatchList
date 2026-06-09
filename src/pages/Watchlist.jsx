@@ -93,7 +93,7 @@ export function Watchlist() {
   })()
 
   return (
-    <div className="px-4 py-8 max-w-4xl mx-auto">
+    <div className="px-4 py-8 max-w-5xl mx-auto page-fade">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold text-white">My Watchlist</h1>
         <div className="flex items-center gap-3">
@@ -147,7 +147,7 @@ export function Watchlist() {
               {group.map(anime => (
                 <div key={anime.mal_id} className="flex items-center gap-3 bg-zinc-900 rounded-md p-3 border border-zinc-800 hover:border-zinc-700 transition-colors">
                   <Link to={`/anime/${anime.mal_id}`} className="shrink-0">
-                    <img src={anime.image_url} alt={anime.title} className="w-10 h-14 object-cover rounded" />
+                    <img src={anime.image_url} alt={anime.title} className="w-10 h-14 object-cover rounded bg-zinc-800" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 7'%3E%3Crect width='5' height='7' fill='%2318181b'/%3E%3C/svg%3E" }} />
                   </Link>
                   <div className="flex-1 min-w-0">
                     <Link to={`/anime/${anime.mal_id}`} className="font-medium text-white hover:text-emerald-400 text-sm block truncate transition-colors">
