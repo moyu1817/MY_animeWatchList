@@ -21,8 +21,8 @@ export function AnimeCard({ anime }) {
           loading="lazy"
         />
       </Link>
-      <div className="p-3 flex flex-col gap-2 h-32">
-        <div className="h-10 overflow-hidden">
+      <div className="p-3 flex flex-col h-32 overflow-hidden">
+        <div className="h-10 overflow-hidden shrink-0">
           <Link
             to={`/anime/${anime.mal_id}`}
             className="font-medium text-sm text-white hover:text-emerald-400 line-clamp-2 transition-colors"
@@ -30,18 +30,20 @@ export function AnimeCard({ anime }) {
             {title}
           </Link>
         </div>
-        <div className="text-xs text-zinc-600 flex gap-2 flex-wrap mt-auto">
+        <div className="text-xs text-zinc-600 flex gap-2 flex-wrap shrink-0 mt-1">
           {anime.type && <span>{anime.type}</span>}
           {anime.episodes && <span>{anime.episodes} eps</span>}
           {anime.score && <span className="text-emerald-500">★ {anime.score}</span>}
         </div>
-        <WatchlistButton anime={{
-          mal_id: anime.mal_id,
-          title,
-          image_url: image,
-          score: anime.score ?? null,
-          episodes: anime.episodes ?? null,
-        }} />
+        <div className="mt-auto pt-1.5">
+          <WatchlistButton anime={{
+            mal_id: anime.mal_id,
+            title,
+            image_url: image,
+            score: anime.score ?? null,
+            episodes: anime.episodes ?? null,
+          }} />
+        </div>
       </div>
     </div>
   )
