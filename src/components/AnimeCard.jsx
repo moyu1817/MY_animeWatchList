@@ -22,12 +22,14 @@ export function AnimeCard({ anime }) {
         />
       </Link>
       <div className="p-3 flex flex-col gap-2 flex-1">
-        <Link
-          to={`/anime/${anime.mal_id}`}
-          className="font-medium text-sm text-white hover:text-emerald-400 line-clamp-2 transition-colors h-10 block"
-        >
-          {title}
-        </Link>
+        <div className="h-10 overflow-hidden">
+          <Link
+            to={`/anime/${anime.mal_id}`}
+            className="font-medium text-sm text-white hover:text-emerald-400 line-clamp-2 transition-colors"
+          >
+            {title}
+          </Link>
+        </div>
         <div className="text-xs text-zinc-600 flex gap-2 flex-wrap mt-auto">
           {anime.type && <span>{anime.type}</span>}
           {anime.episodes && <span>{anime.episodes} eps</span>}
