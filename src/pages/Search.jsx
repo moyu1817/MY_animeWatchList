@@ -38,7 +38,7 @@ export function Search() {
     setShowAllGenres(false)
   }, [urlQuery])
 
-  const { data: genresData } = useQuery({
+  const { data: genresData, isLoading: genresLoading } = useQuery({
     queryKey: ['genres'],
     queryFn: getGenres,
     staleTime: Infinity,
@@ -76,16 +76,25 @@ export function Search() {
         <h1 className="text-xl font-bold text-white mb-2">Browse by Category</h1>
         <p className="text-zinc-600 text-sm mb-6">Select a genre or type in the search bar.</p>
         <div className="flex flex-wrap gap-2">
-          {allGenres.map(g => (
-            <button
-              key={g.mal_id}
-              onClick={() => toggleGenre(g)}
-              className="px-3 py-1.5 rounded-md text-sm bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-emerald-500/40 transition-colors cursor-pointer"
-            >
-              {g.name}
-              <span className="ml-1.5 text-zinc-700 text-xs">{g.count?.toLocaleString()}</span>
-            </button>
-          ))}
+          {genresLoading
+            ? Array.from({ length: 28 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-8 bg-zinc-900 border border-zinc-800 rounded-md animate-pulse"
+                  style={{ width: `${['72px','88px','64px','96px','80px'][i % 5]}` }}
+                />
+              ))
+            : allGenres.map(g => (
+                <button
+                  key={g.mal_id}
+                  onClick={() => toggleGenre(g)}
+                  className="px-3 py-1.5 rounded-md text-sm bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-emerald-500/40 transition-colors cursor-pointer"
+                >
+                  {g.name}
+                  <span className="ml-1.5 text-zinc-700 text-xs">{g.count?.toLocaleString()}</span>
+                </button>
+              ))
+          }
         </div>
       </div>
     )
