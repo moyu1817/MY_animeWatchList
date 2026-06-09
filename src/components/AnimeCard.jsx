@@ -32,7 +32,7 @@ export function AnimeCard({ anime }) {
         </div>
         <div className="text-xs text-zinc-600 flex gap-2 flex-wrap shrink-0 mt-1">
           {anime.type && <span>{anime.type}</span>}
-          {anime.episodes && <span>{anime.episodes} eps</span>}
+          {!!anime.episodes && <span>{anime.episodes} eps</span>}
           {anime.score && <span className="text-emerald-500">★ {anime.score}</span>}
         </div>
         <div className="mt-auto pt-1.5">

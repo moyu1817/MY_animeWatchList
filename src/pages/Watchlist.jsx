@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { StatusBadge } from '../components/StatusBadge'
@@ -48,14 +48,18 @@ export function Watchlist() {
   const [sortBy, setSortBy] = useState('date')
   const [search, setSearch] = useState('')
   const [confirmId, setConfirmId] = useState(null)
+  const confirmTimer = useRef(null)
+
+  useEffect(() => () => clearTimeout(confirmTimer.current), [])
 
   function handleRemove(mal_id) {
     if (confirmId === mal_id) {
       removeAnime(mal_id)
       setConfirmId(null)
     } else {
+      clearTimeout(confirmTimer.current)
       setConfirmId(mal_id)
-      setTimeout(() => setConfirmId(id => id === mal_id ? null : id), 3000)
+      confirmTimer.current = setTimeout(() => setConfirmId(id => id === mal_id ? null : id), 3000)
     }
   }
 
@@ -66,7 +70,7 @@ export function Watchlist() {
     a.href = url
     a.download = 'my-watchlist.json'
     a.click()
-    URL.revokeObjectURL(url)
+    setTimeout(() => URL.revokeObjectURL(url), 100)
   }
 
   if (watchlist.length === 0) {

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useCallback } from 'react'
 
 const STORAGE_KEY = 'recently_viewed'
 const MAX = 10
@@ -11,7 +11,7 @@ export function RecentlyViewedProvider({ children }) {
     catch { return [] }
   })
 
-  function addToRecent(anime) {
+  const addToRecent = useCallback((anime) => {
     setRecentlyViewed(prev => {
       const entry = {
         mal_id: anime.mal_id,
@@ -27,7 +27,7 @@ export function RecentlyViewedProvider({ children }) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
       return updated
     })
-  }
+  }, [])
 
   return (
     <RecentlyViewedContext.Provider value={{ recentlyViewed, addToRecent }}>

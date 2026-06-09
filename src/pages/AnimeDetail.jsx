@@ -123,7 +123,7 @@ export function AnimeDetail() {
 
       {/* Content overlapping banner */}
       <div className="px-4 max-w-5xl mx-auto -mt-36 relative pb-10">
-        <button onClick={() => navigate(-1)} className="text-zinc-500 hover:text-white text-sm mb-6 inline-block transition-colors cursor-pointer">← Back</button>
+        <button onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/')} className="text-zinc-500 hover:text-white text-sm mb-6 inline-block transition-colors cursor-pointer">← Back</button>
 
         <div className="flex flex-col sm:flex-row gap-6">
           {/* Poster */}
