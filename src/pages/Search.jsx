@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
@@ -51,20 +51,22 @@ export function Search() {
   const [showMoreTags,   setShowMoreTags]   = useState(false)
   const [showMoreGenres, setShowMoreGenres] = useState(false)
   const [filtersOpen,    setFiltersOpen]    = useState(true)
-  const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
+  const [prevUrlQuery,   setPrevUrlQuery]   = useState(urlQuery)
+  const [prevUrlGenre,   setPrevUrlGenre]   = useState(urlGenre)
 
   usePageTitle(
     urlQuery      ? `Search: ${urlQuery}` :
     genres.length ? genres.join(', ')      : 'Browse'
   )
 
-  useEffect(() => {
-    if (urlGenre) setGenres([urlGenre])
-  }, [urlGenre])
-
   if (prevUrlQuery !== urlQuery) {
     setPrevUrlQuery(urlQuery)
     setType('All'); setStatus(''); setGenres([]); setSort('popularity'); setTags([])
+  }
+
+  if (prevUrlGenre !== urlGenre) {
+    setPrevUrlGenre(urlGenre)
+    setGenres(urlGenre ? [urlGenre] : [])
   }
 
   const { data: genresData, isLoading: genresLoading } = useQuery({
