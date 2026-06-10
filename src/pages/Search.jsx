@@ -142,22 +142,24 @@ export function Search() {
       {/* Popular Tags row */}
       <div className="mb-5">
         <span className="text-zinc-500 text-xs uppercase tracking-wide block mb-2">Popular Tags</span>
-        <div className="flex flex-wrap gap-2">
-          {(showMoreTags ? [...POPULAR_TAGS, ...EXTRA_TAGS] : POPULAR_TAGS).map(tag => {
-            const isActive = tags.includes(tag)
-            return (
-              <button
-                key={tag}
-                onClick={() => toggleTag(tag)}
-                className={`${btnBase} ${isActive ? btnActive : btnInactive}`}
-              >
-                {tag}{isActive && ' ×'}
-              </button>
-            )
-          })}
+        <div className="flex items-start gap-3">
+          <div className="flex flex-wrap gap-2 flex-1">
+            {(showMoreTags ? [...POPULAR_TAGS, ...EXTRA_TAGS] : POPULAR_TAGS).map(tag => {
+              const isActive = tags.includes(tag)
+              return (
+                <button
+                  key={tag}
+                  onClick={() => toggleTag(tag)}
+                  className={`${btnBase} ${isActive ? btnActive : btnInactive}`}
+                >
+                  {tag}{isActive && ' ×'}
+                </button>
+              )
+            })}
+          </div>
           <button
             onClick={() => setShowMoreTags(v => !v)}
-            className="px-3 py-1 rounded-md text-sm border border-dashed border-zinc-700 text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 transition-colors cursor-pointer"
+            className="shrink-0 px-3 py-1 rounded-md text-sm border border-dashed border-zinc-700 text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 transition-colors cursor-pointer"
           >
             {showMoreTags ? 'Show less ↑' : `+ ${EXTRA_TAGS.length} more`}
           </button>
@@ -171,28 +173,30 @@ export function Search() {
           {/* Genre */}
           <div>
             <span className={filterLabel}>Genre</span>
-            <div className="flex flex-wrap gap-2">
-              {genresLoading
-                ? Array.from({ length: 8 }).map((_, i) => (
-                    <div key={i} className="h-7 w-20 bg-zinc-900 border border-zinc-800 rounded-md animate-pulse" />
-                  ))
-                : (showMoreGenres ? allGenres : allGenres.slice(0, 8)).map(g => {
-                    const isActive = genres.includes(g.name)
-                    return (
-                      <button
-                        key={g.mal_id}
-                        onClick={() => toggleGenre(g.name)}
-                        className={`${btnBase} ${isActive ? btnActive : btnInactive}`}
-                      >
-                        {g.name}{isActive && ' ×'}
-                      </button>
-                    )
-                  })
-              }
+            <div className="flex items-start gap-3">
+              <div className="flex flex-wrap gap-2 flex-1">
+                {genresLoading
+                  ? Array.from({ length: 8 }).map((_, i) => (
+                      <div key={i} className="h-7 w-20 bg-zinc-900 border border-zinc-800 rounded-md animate-pulse" />
+                    ))
+                  : (showMoreGenres ? allGenres : allGenres.slice(0, 8)).map(g => {
+                      const isActive = genres.includes(g.name)
+                      return (
+                        <button
+                          key={g.mal_id}
+                          onClick={() => toggleGenre(g.name)}
+                          className={`${btnBase} ${isActive ? btnActive : btnInactive}`}
+                        >
+                          {g.name}{isActive && ' ×'}
+                        </button>
+                      )
+                    })
+                }
+              </div>
               {!genresLoading && (
                 <button
                   onClick={() => setShowMoreGenres(v => !v)}
-                  className="px-3 py-1 rounded-md text-sm border border-dashed border-zinc-700 text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 transition-colors cursor-pointer"
+                  className="shrink-0 px-3 py-1 rounded-md text-sm border border-dashed border-zinc-700 text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 transition-colors cursor-pointer"
                 >
                   {showMoreGenres ? 'Show less ↑' : `+ ${allGenres.length - 8} more`}
                 </button>
