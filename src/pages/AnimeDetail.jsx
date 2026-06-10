@@ -24,8 +24,8 @@ function TrailerEmbed({ embedUrl, title }) {
   }
 
   return (
-    <button className="relative w-full h-full cursor-pointer group" onClick={() => setPlaying(true)} aria-label={`Play ${title} trailer`}>
-      <img src={thumbnail} alt="" aria-hidden="true" className="w-full h-full object-cover" />
+    <button className="relative block w-full h-full cursor-pointer group" onClick={() => setPlaying(true)} aria-label={`Play ${title} trailer`}>
+      <img src={thumbnail} alt="" aria-hidden="true" className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none' }} />
       <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/25 transition-colors">
         <div className="w-14 h-14 rounded-full bg-black/70 border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white" aria-hidden="true">
