@@ -1,16 +1,17 @@
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useState, useMemo } from 'react'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
 import { getSeasonsList, getSeasonAnime } from '../services/anilistApi'
 import { usePageTitle } from '../hooks/usePageTitle'
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
 import { dedupByMalId } from '../utils/anime'
 
 const SEASON_COLORS = {
-  winter: '#93c5fd',  // blue-300 — icy
-  spring: '#f9a8d4',  // pink-300 — blossom
-  summer: '#fcd34d',  // amber-300 — sunny
-  fall:   '#fb923c',  // orange-400 — autumn
+  winter: '#93c5fd',
+  spring: '#f9a8d4',
+  summer: '#fcd34d',
+  fall:   '#fb923c',
 }
 
 function SeasonIcon({ season }) {
@@ -66,18 +67,16 @@ function getCurrentSeason() {
   return 'fall'
 }
 
-const btnBase = 'px-4 py-2 rounded-md text-sm font-medium border transition-colors cursor-pointer capitalize disabled:opacity-30 disabled:cursor-default flex items-center gap-1.5'
-const btnActive = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+const btnBase    = 'px-4 py-2 rounded-md text-sm font-medium border transition-colors cursor-pointer capitalize disabled:opacity-30 disabled:cursor-default flex items-center gap-1.5'
+const btnActive  = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
 const btnInactive = 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600'
-const paginationBtn = 'px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-md text-sm text-zinc-400 disabled:opacity-30 hover:bg-zinc-800 hover:text-white transition-colors cursor-pointer disabled:cursor-default'
 
 export function Seasons() {
-  const currentYear = new Date().getFullYear()
+  const currentYear   = new Date().getFullYear()
   const currentSeason = getCurrentSeason()
 
-  const [selectedYear, setSelectedYear] = useState(currentYear)
+  const [selectedYear,   setSelectedYear]   = useState(currentYear)
   const [selectedSeason, setSelectedSeason] = useState(currentSeason)
-  const [page, setPage] = useState(1)
   usePageTitle(`${selectedSeason.charAt(0).toUpperCase() + selectedSeason.slice(1)} ${selectedYear} Season`)
 
   const { data: seasonsList, isLoading: loadingList } = useQuery({
@@ -86,26 +85,29 @@ export function Seasons() {
     staleTime: Infinity,
   })
 
-  const { data: animeData, isLoading: loadingAnime } = useQuery({
-    queryKey: ['season-anime', selectedYear, selectedSeason, page],
-    queryFn: () => getSeasonAnime(selectedYear, selectedSeason, page),
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading: loadingAnime } = useInfiniteQuery({
+    queryKey: ['season-anime', selectedYear, selectedSeason],
+    queryFn: ({ pageParam = 1 }) => getSeasonAnime(selectedYear, selectedSeason, pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const { has_next_page, current_page } = lastPage.pagination ?? {}
+      return has_next_page ? (current_page ?? 1) + 1 : undefined
+    },
     enabled: !!selectedYear && !!selectedSeason,
   })
 
-  const items = dedupByMalId(animeData?.data ?? [])
-  const lastPage = animeData?.pagination?.last_visible_page ?? 1
-  const list = seasonsList ?? []
-  const availableYears = list.length ? [...new Set(list.map(s => s.year))].sort((a, b) => b - a) : []
+  const items       = useMemo(() => dedupByMalId(data?.pages.flatMap(p => p.data ?? []) ?? []), [data])
+  const sentinelRef = useInfiniteScroll(fetchNextPage, hasNextPage && !isFetchingNextPage)
+
+  const list            = seasonsList ?? []
+  const availableYears  = list.length ? [...new Set(list.map(s => s.year))].sort((a, b) => b - a) : []
   const availableSeasons = list.find(s => s.year === selectedYear)?.seasons ?? ['winter', 'spring', 'summer', 'fall']
 
   function selectYear(year) {
     setSelectedYear(year)
-    setPage(1)
     const seasons = list.find(s => s.year === year)?.seasons ?? ['winter', 'spring', 'summer', 'fall']
     if (seasons.length && !seasons.includes(selectedSeason)) setSelectedSeason(seasons[seasons.length - 1])
   }
-
-  function selectSeason(season) { setSelectedSeason(season); setPage(1) }
 
   const orderedSeasons = [currentSeason, ...['winter', 'spring', 'summer', 'fall'].filter(s => s !== currentSeason)]
 
@@ -137,13 +139,13 @@ export function Seasons() {
           <p className="text-zinc-600 text-xs mb-2 uppercase tracking-wide">Season</p>
           <div className="flex gap-2 flex-wrap">
             {orderedSeasons.map(season => {
-              const available = availableSeasons.includes(season)
-              const isCurrent = season === currentSeason && selectedYear === currentYear
+              const available  = availableSeasons.includes(season)
+              const isCurrent  = season === currentSeason && selectedYear === currentYear
               const isSelected = selectedSeason === season
               return (
                 <button
                   key={season}
-                  onClick={() => available && selectSeason(season)}
+                  onClick={() => available && setSelectedSeason(season)}
                   disabled={!available}
                   className={`relative ${btnBase} ${isSelected ? btnActive : btnInactive}`}
                 >
@@ -173,23 +175,21 @@ export function Seasons() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-4">
         {loadingAnime
           ? Array.from({ length: 20 }).map((_, i) => <SkeletonCard key={i} />)
           : items.map(anime => <AnimeCard key={anime.mal_id} anime={anime} showAiringBadge={false} />)
         }
+        {isFetchingNextPage && Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={`next-${i}`} />)}
       </div>
 
       {!loadingAnime && items.length === 0 && (
         <p className="text-center text-zinc-600 py-12">No anime found for this season.</p>
       )}
 
-      {!loadingAnime && items.length > 0 && (
-        <div className="flex justify-center items-center gap-3">
-          <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className={paginationBtn}>← Prev</button>
-          <span className="text-zinc-500 text-sm">Page {page} of {lastPage}</span>
-          <button onClick={() => setPage(p => Math.min(lastPage, p + 1))} disabled={page === lastPage} className={paginationBtn}>Next →</button>
-        </div>
+      <div ref={sentinelRef} />
+      {!loadingAnime && !hasNextPage && items.length > 0 && (
+        <p className="text-center text-zinc-700 text-sm py-4">All {items.length} results loaded.</p>
       )}
     </div>
   )
