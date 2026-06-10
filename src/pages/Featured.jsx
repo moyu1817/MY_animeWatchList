@@ -39,7 +39,7 @@ export function Featured() {
     },
   })
 
-  const items = useMemo(() => dedupByMalId(data?.pages.flatMap(p => p.data) ?? []), [data])
+  const items = useMemo(() => dedupByMalId(data?.pages.flatMap(p => p.data ?? []) ?? []), [data])
   const sentinelRef = useInfiniteScroll(fetchNextPage, hasNextPage && !isFetchingNextPage)
 
   return (

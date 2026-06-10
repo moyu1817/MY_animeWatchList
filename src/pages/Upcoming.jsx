@@ -50,8 +50,8 @@ export function Upcoming() {
     },
   })
 
-  const allItems = useMemo(() => dedupByMalId(data?.pages.flatMap(p => p.data) ?? []), [data])
-  const items = allItems.filter(a => type === 'All' || a.type === type)
+  const allItems = useMemo(() => dedupByMalId(data?.pages.flatMap(p => p.data ?? []) ?? []), [data])
+  const items = useMemo(() => (type === 'All' ? allItems : allItems.filter(a => a.type === type)), [allItems, type])
   const sentinelRef = useInfiniteScroll(fetchNextPage, hasNextPage && !isFetchingNextPage)
 
   return (

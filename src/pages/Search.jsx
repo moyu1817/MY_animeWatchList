@@ -5,6 +5,7 @@ import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
 import { searchAllAnime, getGenres } from '../services/jikanApi'
 import { usePageTitle } from '../hooks/usePageTitle'
+import { dedupByMalId } from '../utils/anime'
 
 
 const TYPES = ['All', 'TV', 'Movie', 'OVA', 'ONA', 'Special']
@@ -55,7 +56,7 @@ export function Search() {
     enabled: hasFilter,
   })
 
-  const items = data?.data ?? []
+  const items = dedupByMalId(data?.data ?? [])
   const total = data?.pagination?.items?.total ?? 0
   const lastPage = data?.pagination?.last_visible_page ?? 1
 

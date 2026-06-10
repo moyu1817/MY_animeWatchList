@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { usePageTitle } from '../hooks/usePageTitle'
-import { STATUS_LABELS } from '../utils/watchlistStatus'
+import { STATUSES, STATUS_LABELS } from '../utils/watchlistStatus'
 const STATUS_COLORS = { plan_to_watch: 'bg-emerald-500', watching: 'bg-emerald-400', completed: 'bg-emerald-300', dropped: 'bg-zinc-600' }
 
 function StatCard({ label, value, sub }) {
@@ -41,8 +41,7 @@ export function Stats() {
   const completionRate = total > 0 ? Math.round((completed.length / total) * 100) : 0
 
   // Status breakdown
-  const statuses = ['plan_to_watch', 'watching', 'completed', 'dropped']
-  const statusCounts = statuses.map(s => ({ status: s, count: watchlist.filter(a => a.status === s).length }))
+  const statusCounts = STATUSES.map(s => ({ status: s, count: watchlist.filter(a => a.status === s).length }))
   const maxStatusCount = Math.max(...statusCounts.map(s => s.count), 1)
 
   // Rating distribution

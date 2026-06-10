@@ -5,17 +5,12 @@ const styles = {
   dropped: 'bg-zinc-500/10 text-zinc-500 border-zinc-500/20',
 }
 
-const labels = {
-  plan_to_watch: 'Plan to Watch',
-  watching: 'Watching',
-  completed: 'Completed',
-  dropped: 'Dropped',
-}
+import { STATUS_LABELS } from '../utils/watchlistStatus'
 
 export function StatusBadge({ status }) {
   return (
     <span className={`text-xs px-2 py-0.5 rounded-md border ${styles[status]}`}>
-      {labels[status]}
+      {STATUS_LABELS[status]}
     </span>
   )
 }
