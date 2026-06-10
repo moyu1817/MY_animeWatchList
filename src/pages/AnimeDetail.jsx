@@ -14,36 +14,15 @@ const TABS = ['Overview', 'Characters', 'Recommendations', 'Related']
 
 
 function TrailerEmbed({ embedUrl, title }) {
-  const [playing, setPlaying] = useState(false)
   if (!SAFE_EMBED.test(embedUrl)) return null
-  const videoId = embedUrl.match(/\/embed\/([^?/]+)/)?.[1]
-  const thumbnail = videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : null
-  const src = playing ? `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}autoplay=1` : embedUrl
-
-  if (!thumbnail || playing) {
-    return <iframe src={src} title={`${title} trailer`} className="w-full h-full" allowFullScreen sandbox="allow-scripts allow-same-origin allow-presentation" />
-  }
-
-  function handleThumbError(e) {
-    const img = e.currentTarget
-    if (img.src.includes('hqdefault')) {
-      img.src = `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`
-    } else {
-      img.style.display = 'none'
-    }
-  }
-
   return (
-    <button className="relative block w-full h-full cursor-pointer group" onClick={() => setPlaying(true)} aria-label={`Play ${title} trailer`}>
-      <img src={thumbnail} alt="" aria-hidden="true" className="w-full h-full object-cover" referrerPolicy="no-referrer" onError={handleThumbError} />
-      <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/25 transition-colors">
-        <div className="w-14 h-14 rounded-full bg-black/70 border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white" aria-hidden="true">
-            <polygon points="5,3 19,12 5,21"/>
-          </svg>
-        </div>
-      </div>
-    </button>
+    <iframe
+      src={embedUrl}
+      title={`${title} trailer`}
+      className="w-full h-full"
+      allowFullScreen
+      sandbox="allow-scripts allow-same-origin allow-presentation"
+    />
   )
 }
 
