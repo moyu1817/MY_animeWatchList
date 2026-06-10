@@ -214,7 +214,8 @@ export function Home() {
         <AnimeRow title="Upcoming This Season"  queryKey={['upcoming', 1]}                queryFn={() => getUpcomingAnime(1)}                linkTo="/featured?tab=upcoming" />
         <AnimeRow title="Currently Airing"       queryKey={['current', 1]}                queryFn={() => getCurrentSeason(1)}                linkTo="/featured?tab=airing" />
         <AnimeRow title="Top Rated All Time"     queryKey={['top', '', '', 1]}             queryFn={() => getTopAnime(1, '', '')}             linkTo="/featured" />
-        <AnimeRow title="Most Popular"           queryKey={['top', 'bypopularity', '', 1]} queryFn={() => getTopAnime(1, '', 'bypopularity')} linkTo="/featured?tab=bypopularity" />
+        <AnimeRow title="Most Popular"            queryKey={['top', 'bypopularity', '', 1]} queryFn={() => getTopAnime(1, '', 'bypopularity')} linkTo="/featured?tab=bypopularity" />
+        <AnimeRow title="Most Favorited"         queryKey={['top', 'favorite', '', 1]}     queryFn={() => getTopAnime(1, '', 'favorite')}     linkTo="/featured?tab=favorite" />
       </div>
     </div>
   )
