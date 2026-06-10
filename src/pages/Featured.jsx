@@ -76,11 +76,11 @@ export function Featured() {
           ? Array.from({ length: 20 }).map((_, i) => <SkeletonCard key={i} />)
           : items.map((anime, i) => (
             <div key={`${anime.mal_id}-${i}`} className="relative flex flex-col">
-              <span className={`absolute top-2 left-2 z-10 text-xs font-bold px-2 py-0.5 rounded-full ${
-                i === 0 ? 'bg-yellow-400 text-black' :
-                i === 1 ? 'bg-zinc-300 text-black' :
-                i === 2 ? 'bg-amber-600 text-white' :
-                'bg-zinc-800 text-zinc-400'
+              <span className={`absolute top-2 left-2 z-10 text-xs font-bold px-2 py-0.5 rounded-full backdrop-blur-sm border ${
+                i === 0 ? 'bg-black/50 text-yellow-400 border-yellow-400/40' :
+                i === 1 ? 'bg-black/50 text-slate-300 border-slate-400/40' :
+                i === 2 ? 'bg-black/50 text-amber-500 border-amber-500/40' :
+                'bg-black/50 text-zinc-400 border-zinc-600/40'
               }`}>
                 #{i + 1}
               </span>
