@@ -80,7 +80,7 @@ export function Featured() {
                 i === 0 ? 'bg-yellow-400 text-black' :
                 i === 1 ? 'bg-zinc-300 text-black' :
                 i === 2 ? 'bg-amber-600 text-white' :
-                'bg-black/70 text-zinc-400 border border-zinc-700'
+                'bg-zinc-800 text-zinc-400'
               }`}>
                 #{i + 1}
               </span>

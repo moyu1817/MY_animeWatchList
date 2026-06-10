@@ -125,13 +125,16 @@ export function Home() {
                   >
                     View Details
                   </Link>
-                  <WatchlistButton anime={{
-                    mal_id: featured.mal_id,
-                    title: featuredTitle,
-                    image_url: featured.images?.jpg?.large_image_url,
-                    score: featured.score ?? null,
-                    episodes: featured.episodes ?? null,
-                  }} />
+                  <WatchlistButton
+                    anime={{
+                      mal_id: featured.mal_id,
+                      title: featuredTitle,
+                      image_url: featured.images?.jpg?.large_image_url,
+                      score: featured.score ?? null,
+                      episodes: featured.episodes ?? null,
+                    }}
+                    className="px-5"
+                  />
                 </div>
               </>
             ) : (

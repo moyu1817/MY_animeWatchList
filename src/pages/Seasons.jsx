@@ -6,7 +6,7 @@ import { getSeasonsList, getSeasonAnime } from '../services/anilistApi'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { dedupByMalId } from '../utils/anime'
 
-const SEASON_ICONS = { winter: '❄', spring: '✿', summer: '✦', fall: '❧' }
+const SEASON_ICONS = { winter: '❄️', spring: '🌸', summer: '☀️', fall: '🍂' }
 
 function getCurrentSeason() {
   const m = new Date().getMonth()
@@ -124,7 +124,7 @@ export function Seasons() {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-8">
         {loadingAnime
           ? Array.from({ length: 20 }).map((_, i) => <SkeletonCard key={i} />)
-          : items.map(anime => <AnimeCard key={anime.mal_id} anime={anime} />)
+          : items.map(anime => <AnimeCard key={anime.mal_id} anime={anime} showAiringBadge={false} />)
         }
       </div>
 

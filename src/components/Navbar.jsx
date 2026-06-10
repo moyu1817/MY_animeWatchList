@@ -102,10 +102,13 @@ export function Navbar() {
                 value={query}
                 onChange={e => { setQuery(e.target.value); setOpen(true) }}
                 onFocus={() => setOpen(true)}
-                placeholder="Search… ( / )"
+                placeholder="Search anime…"
                 aria-label="Search anime"
-                className="bg-zinc-900 border border-zinc-800 text-white text-sm rounded-md px-3 py-1.5 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition-colors w-44 lg:w-60"
+                className="bg-zinc-900 border border-zinc-800 text-white text-sm rounded-md pl-3 pr-8 py-1.5 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition-colors w-44 lg:w-60"
               />
+              {!query && (
+                <kbd className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-zinc-600 bg-zinc-800 border border-zinc-700 px-1 py-0.5 rounded pointer-events-none">/</kbd>
+              )}
               {showDropdown && (
                 <div className="absolute top-full mt-1 left-0 w-72 bg-zinc-900 border border-zinc-800 rounded-md overflow-hidden shadow-2xl z-50">
                   {suggestions.map(anime => {
