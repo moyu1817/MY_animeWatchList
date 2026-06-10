@@ -15,7 +15,7 @@ export function AnimeCard({ anime }) {
           Airing
         </span>
       )}
-      <Link to={`/anime/${anime.mal_id}`} tabIndex={-1} aria-hidden="true" className="relative block">
+      <Link to={`/anime/${anime.mal_id}`} tabIndex={-1} aria-hidden="true">
         <img
           src={image}
           alt=""
@@ -24,11 +24,6 @@ export function AnimeCard({ anime }) {
           referrerPolicy="no-referrer"
           onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = IMG_FALLBACK }}
         />
-        {anime.synopsis && (
-          <div className="absolute inset-0 bg-black/85 flex items-end opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <p className="text-white text-[11px] leading-relaxed p-2.5 line-clamp-6">{anime.synopsis}</p>
-          </div>
-        )}
       </Link>
       <div className="p-3 h-32 grid grid-rows-[auto_1fr_auto] overflow-hidden">
         <Link
