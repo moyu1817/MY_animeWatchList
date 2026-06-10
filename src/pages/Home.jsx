@@ -74,19 +74,18 @@ export function Home() {
   const featuredList = useMemo(() => (upcomingData?.data ?? []).slice(0, 5), [upcomingData])
   const [heroIdx, setHeroIdx] = useState(0)
   const pausedRef = useRef(false)
-  const listLenRef = useRef(0)
-  listLenRef.current = featuredList.length
   const { recentlyViewed } = useRecentlyViewed()
   const recentRef = useRef(null)
   usePageTitle('Home')
 
   useEffect(() => {
+    if (featuredList.length <= 1) return
     const id = setInterval(() => {
-      if (!pausedRef.current && listLenRef.current > 1)
-        setHeroIdx(i => (i + 1) % listLenRef.current)
+      if (!pausedRef.current)
+        setHeroIdx(i => (i + 1) % featuredList.length)
     }, 6000)
     return () => clearInterval(id)
-  }, [])
+  }, [featuredList.length])
 
   return (
     <div className="py-8 page-fade">
