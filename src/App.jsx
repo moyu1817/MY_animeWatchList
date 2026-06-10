@@ -12,6 +12,7 @@ import { RateLimitBanner } from './components/RateLimitBanner'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { ToastProvider } from './context/ToastContext'
 import { Toast } from './components/Toast'
+import { QueryErrorResetBoundary } from '@tanstack/react-query'
 
 const Home        = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
 const Featured    = lazy(() => import('./pages/Featured').then(m => ({ default: m.Featured })))
@@ -42,7 +43,13 @@ function KeyboardShortcuts() {
 }
 
 function Page({ children }) {
-  return <ErrorBoundary>{children}</ErrorBoundary>
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary onReset={reset}>{children}</ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  )
 }
 
 export default function App() {

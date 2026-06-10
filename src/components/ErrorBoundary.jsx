@@ -5,6 +5,7 @@ export class ErrorBoundary extends Component {
   constructor(props) {
     super(props)
     this.state = { hasError: false }
+    this.reset = this.reset.bind(this)
   }
 
   static getDerivedStateFromError() {
@@ -13,6 +14,11 @@ export class ErrorBoundary extends Component {
 
   componentDidCatch(error, info) {
     if (import.meta.env.DEV) console.error('ErrorBoundary caught:', error, info)
+  }
+
+  reset() {
+    this.props.onReset?.()
+    this.setState({ hasError: false })
   }
 
   render() {
@@ -26,14 +32,14 @@ export class ErrorBoundary extends Component {
           </p>
           <div className="flex gap-3">
             <button
-              onClick={() => this.setState({ hasError: false })}
+              onClick={this.reset}
               className="bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-2 rounded-md text-sm font-semibold transition-colors cursor-pointer"
             >
               Try again
             </button>
             <Link
               to="/"
-              onClick={() => this.setState({ hasError: false })}
+              onClick={this.reset}
               className="border border-zinc-700 text-zinc-400 hover:text-white px-5 py-2 rounded-md text-sm transition-colors"
             >
               Go home
