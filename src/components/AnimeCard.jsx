@@ -20,7 +20,7 @@ export function AnimeCard({ anime }) {
           src={image}
           alt=""
           className="w-full aspect-[3/4] object-cover"
-          loading="lazy"
+          loading="eager"
           referrerPolicy="no-referrer"
           onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = IMG_FALLBACK }}
         />
