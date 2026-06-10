@@ -32,8 +32,7 @@ function PageLoader() {
 function KeyboardShortcuts() {
   useKeyboardShortcuts({
     '/': () => {
-      const el = document.getElementById('navbar-search') ?? window.__navSearchRef?.current
-      el?.focus()
+      document.getElementById('navbar-search')?.focus()
     },
   })
   return null

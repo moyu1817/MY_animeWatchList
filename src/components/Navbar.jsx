@@ -33,11 +33,6 @@ export function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Expose search ref globally for keyboard shortcut
-  useEffect(() => {
-    window.__navSearchRef = searchRef
-  }, [])
-
   function handleSearch(e) {
     e.preventDefault()
     const q = query.trim()
