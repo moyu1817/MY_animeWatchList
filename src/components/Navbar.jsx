@@ -82,6 +82,7 @@ export function Navbar() {
             onClick={handleRandom}
             disabled={loadingRandom}
             className="w-8 h-8 flex items-center justify-center rounded-md border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-default shrink-0"
+            aria-label="Surprise me — random anime"
             title="Surprise me — random anime"
           >
             {loadingRandom ? (
@@ -103,6 +104,7 @@ export function Navbar() {
                 onChange={e => { setQuery(e.target.value); setOpen(true) }}
                 onFocus={() => setOpen(true)}
                 placeholder="Search… ( / )"
+                aria-label="Search anime"
                 className="bg-zinc-900 border border-zinc-800 text-white text-sm rounded-md px-3 py-1.5 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition-colors w-44 lg:w-60"
               />
               {showDropdown && (
