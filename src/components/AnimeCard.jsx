@@ -15,10 +15,10 @@ export function AnimeCard({ anime }) {
           Airing
         </span>
       )}
-      <Link to={`/anime/${anime.mal_id}`}>
+      <Link to={`/anime/${anime.mal_id}`} tabIndex={-1} aria-hidden="true">
         <img
           src={image}
-          alt={title}
+          alt=""
           className="w-full aspect-[3/4] object-cover"
           loading="lazy"
           onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = IMG_FALLBACK }}

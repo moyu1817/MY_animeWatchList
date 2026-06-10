@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
@@ -30,14 +30,16 @@ export function Search() {
   const [genre, setGenre] = useState(null)
   const [page, setPage] = useState(1)
   const [showAllGenres, setShowAllGenres] = useState(false)
+  const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
 
-  useEffect(() => {
+  if (prevUrlQuery !== urlQuery) {
+    setPrevUrlQuery(urlQuery)
     setPage(1)
     setType('All')
     setStatus('')
     setGenre(null)
     setShowAllGenres(false)
-  }, [urlQuery])
+  }
 
   const { data: genresData, isLoading: genresLoading } = useQuery({
     queryKey: ['genres'],

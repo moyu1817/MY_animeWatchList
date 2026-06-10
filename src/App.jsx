@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { WatchlistProvider } from './context/WatchlistContext'
 import { ThemeProvider } from './context/ThemeContext'
@@ -10,6 +10,8 @@ import { BackToTop } from './components/BackToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { RateLimitBanner } from './components/RateLimitBanner'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
+import { ToastProvider } from './context/ToastContext'
+import { Toast } from './components/Toast'
 
 const Home        = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
 const Featured    = lazy(() => import('./pages/Featured').then(m => ({ default: m.Featured })))
@@ -46,14 +48,18 @@ function Page({ children }) {
 export default function App() {
   return (
     <ThemeProvider>
+      <ToastProvider>
       <WatchlistProvider>
         <RecentlyViewedProvider>
           <div className="min-h-screen bg-black text-white">
+            <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-emerald-500 focus:text-black focus:rounded-md focus:text-sm focus:font-semibold">
+              Skip to content
+            </a>
             <LoadingBar />
             <ScrollToTop />
             <KeyboardShortcuts />
             <Navbar />
-            <main>
+            <main id="main-content">
               <Suspense fallback={<PageLoader />}>
                 <Routes>
                   <Route path="/" element={<Page><Home /></Page>} />
@@ -75,9 +81,11 @@ export default function App() {
             </footer>
             <BackToTop />
             <RateLimitBanner />
+            <Toast />
           </div>
         </RecentlyViewedProvider>
       </WatchlistProvider>
+      </ToastProvider>
     </ThemeProvider>
   )
 }

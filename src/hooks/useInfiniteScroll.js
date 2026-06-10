@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback } from 'react'
 
 export function useInfiniteScroll(fetchNextPage, enabled) {
   const ref = useRef(null)
-  const stable = useCallback(fetchNextPage, [fetchNextPage])
+  const stable = useCallback(() => fetchNextPage(), [fetchNextPage])
 
   useEffect(() => {
     const el = ref.current

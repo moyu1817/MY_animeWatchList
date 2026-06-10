@@ -36,6 +36,7 @@ export function RecentlyViewedProvider({ children }) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useRecentlyViewed() {
   return useContext(RecentlyViewedContext)
 }

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const api = axios.create({ baseURL: 'https://api.jikan.moe/v4' })
+const api = axios.create({ baseURL: 'https://api.jikan.moe/v4', timeout: 10000 })
 
 api.interceptors.response.use(
   res => res,

@@ -20,20 +20,20 @@ function TrailerEmbed({ embedUrl, title }) {
   const src = playing ? `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}autoplay=1` : embedUrl
 
   if (!thumbnail || playing) {
-    return <iframe src={src} title={`${title} trailer`} className="w-full h-full" allowFullScreen />
+    return <iframe src={src} title={`${title} trailer`} className="w-full h-full" allowFullScreen sandbox="allow-scripts allow-same-origin allow-presentation" />
   }
 
   return (
-    <div className="relative w-full h-full cursor-pointer group" onClick={() => setPlaying(true)}>
-      <img src={thumbnail} alt={`${title} trailer`} className="w-full h-full object-cover" />
+    <button className="relative w-full h-full cursor-pointer group" onClick={() => setPlaying(true)} aria-label={`Play ${title} trailer`}>
+      <img src={thumbnail} alt="" aria-hidden="true" className="w-full h-full object-cover" />
       <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/25 transition-colors">
         <div className="w-14 h-14 rounded-full bg-black/70 border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white" aria-hidden="true">
             <polygon points="5,3 19,12 5,21"/>
           </svg>
         </div>
       </div>
-    </div>
+    </button>
   )
 }
 
@@ -70,6 +70,66 @@ export function AnimeDetail() {
   useEffect(() => {
     if (anime) addToRecent(anime)
   }, [anime, addToRecent])
+
+  useEffect(() => {
+    if (!anime) return
+    const animeTitle = anime.title_english ?? anime.title
+    const desc = (anime.synopsis ?? '').slice(0, 160)
+    const img = anime.images?.jpg?.large_image_url ?? ''
+    const pageUrl = window.location.href
+
+    const metaUpdates = [
+      ['meta[property="og:title"]',           'content', animeTitle],
+      ['meta[property="og:description"]',     'content', desc],
+      ['meta[property="og:image"]',           'content', img],
+      ['meta[property="og:image:secure_url"]','content', img],
+      ['meta[property="og:url"]',             'content', pageUrl],
+      ['meta[name="twitter:title"]',          'content', animeTitle],
+      ['meta[name="twitter:description"]',    'content', desc],
+      ['meta[name="twitter:image"]',          'content', img],
+      ['meta[name="description"]',            'content', desc],
+    ]
+    const rollbacks = metaUpdates.map(([sel, attr, val]) => {
+      const el = document.querySelector(sel)
+      if (!el) return null
+      const prev = el.getAttribute(attr)
+      el.setAttribute(attr, val)
+      return () => el.setAttribute(attr, prev ?? '')
+    })
+
+    const ld = {
+      '@context': 'https://schema.org',
+      '@type': 'TVSeries',
+      name: animeTitle,
+      description: anime.synopsis ?? '',
+      image: img,
+      url: pageUrl,
+      ...(anime.score && {
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: anime.score,
+          bestRating: 10,
+          worstRating: 1,
+        },
+      }),
+      ...(anime.genres?.length && { genre: anime.genres.map(g => g.name) }),
+      ...(anime.episodes && { numberOfEpisodes: anime.episodes }),
+      ...(anime.aired?.from && { startDate: anime.aired.from.slice(0, 10) }),
+      ...(anime.studios?.length && {
+        productionCompany: anime.studios.map(s => ({ '@type': 'Organization', name: s.name })),
+      }),
+    }
+    const script = document.createElement('script')
+    script.type = 'application/ld+json'
+    script.id = 'anime-jsonld'
+    script.textContent = JSON.stringify(ld)
+    document.head.appendChild(script)
+
+    return () => {
+      rollbacks.forEach(fn => fn?.())
+      document.getElementById('anime-jsonld')?.remove()
+    }
+  }, [anime])
 
   function handleShare() {
     navigator.clipboard.writeText(window.location.href)
