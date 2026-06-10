@@ -282,7 +282,7 @@ export async function getSchedule(day) {
   const now = Math.floor(Date.now() / 1000)
   const weekLater = now + 7 * 86400
 
-  const Q = `query($from:Int,$to:Int){Page(perPage:50){airingSchedules(airingAt_greater:$from,airingAt_lesser:$to,sort:[TIME]){airingAt episode media{${MEDIA_FIELDS}}}}}`
+  const Q = `query($from:Int,$to:Int){Page(perPage:100){airingSchedules(airingAt_greater:$from,airingAt_lesser:$to,sort:[TIME]){airingAt episode media{${MEDIA_FIELDS} isAdult}}}}`
   const d = await query(Q, { from: now, to: weekLater })
 
   const seen = new Set()
@@ -291,7 +291,7 @@ export async function getSchedule(day) {
       const d = new Date(s.airingAt * 1000).getDay()
       return d === target
     })
-    .filter(s => s.media)
+    .filter(s => s.media && !s.media.isAdult)
     .reduce((acc, s) => {
       if (!seen.has(s.media.id)) { seen.add(s.media.id); acc.push(s.media) }
       return acc

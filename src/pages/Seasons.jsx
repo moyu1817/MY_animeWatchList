@@ -169,9 +169,6 @@ export function Seasons() {
           <SeasonIcon season={selectedSeason} />
           {selectedSeason.charAt(0).toUpperCase() + selectedSeason.slice(1)} {selectedYear}
         </span>
-        {!loadingAnime && items.length > 0 && (
-          <span className="text-zinc-600 text-sm">{items.length} shown</span>
-        )}
       </div>
 
       {/* Grid */}
