@@ -36,7 +36,7 @@ export function AnimeCard({ anime, showAiringBadge = true }) {
           {anime.type && <span>{anime.type}</span>}
           {!!anime.episodes && <span>{anime.episodes} eps</span>}
           {year && <span>{year}</span>}
-          {anime.score && <span className="text-yellow-400">★ {anime.score}</span>}
+          {anime.score && <span className="text-emerald-400">★ {anime.score}</span>}
         </div>
         <WatchlistButton anime={{
           mal_id: anime.mal_id,
