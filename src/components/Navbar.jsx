@@ -115,7 +115,7 @@ export function Navbar() {
                       <button key={anime.mal_id} type="button" onClick={() => handleSelect(anime)}
                         className="w-full flex items-center gap-3 px-3 py-2 hover:bg-zinc-800 transition-colors cursor-pointer text-left"
                       >
-                        <img src={anime.images?.jpg?.image_url} alt={title} className="w-8 h-11 object-cover rounded shrink-0 bg-zinc-800" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 11'%3E%3Crect width='8' height='11' fill='%2318181b'/%3E%3C/svg%3E" }} />
+                        <img src={anime.images?.jpg?.image_url} alt={title} className="w-8 h-11 object-cover rounded shrink-0 bg-zinc-800" referrerPolicy="no-referrer" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 11'%3E%3Crect width='8' height='11' fill='%2318181b'/%3E%3C/svg%3E" }} />
                         <div className="min-w-0 flex-1">
                           <p className="text-white text-sm truncate">{title}</p>
                           <p className="text-zinc-600 text-xs flex gap-2 mt-0.5">

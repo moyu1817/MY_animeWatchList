@@ -81,7 +81,7 @@ export function Home() {
       <div className="px-4 max-w-7xl mx-auto mb-10">
         <div className="relative rounded-xl overflow-hidden h-64 md:h-80 flex items-end bg-zinc-950 border border-zinc-900">
           {featured && (
-            <img src={featured.images?.jpg?.large_image_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-35" />
+            <img src={featured.images?.jpg?.large_image_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-35" referrerPolicy="no-referrer" />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
           <div className="relative p-6 md:p-10">

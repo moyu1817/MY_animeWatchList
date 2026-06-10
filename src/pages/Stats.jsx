@@ -125,7 +125,7 @@ export function Stats() {
                 to={`/anime/${anime.mal_id}`}
                 className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-md p-3 hover:border-emerald-500/30 transition-colors"
               >
-                <img src={anime.image_url} alt={anime.title} className="w-8 h-11 object-cover rounded shrink-0 bg-zinc-800" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 11'%3E%3Crect width='8' height='11' fill='%2318181b'/%3E%3C/svg%3E" }} />
+                <img src={anime.image_url} alt={anime.title} className="w-8 h-11 object-cover rounded shrink-0 bg-zinc-800" referrerPolicy="no-referrer" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 11'%3E%3Crect width='8' height='11' fill='%2318181b'/%3E%3C/svg%3E" }} />
                 <p className="text-white text-sm truncate flex-1">{anime.title}</p>
                 {anime.score && <span className="text-emerald-500 text-xs shrink-0">★ {anime.score}</span>}
               </Link>
@@ -144,7 +144,7 @@ export function Stats() {
               to={`/anime/${anime.mal_id}`}
               className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-md p-3 hover:border-emerald-500/30 transition-colors"
             >
-              <img src={anime.image_url} alt={anime.title} className="w-8 h-11 object-cover rounded shrink-0 bg-zinc-800" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 11'%3E%3Crect width='8' height='11' fill='%2318181b'/%3E%3C/svg%3E" }} />
+              <img src={anime.image_url} alt={anime.title} className="w-8 h-11 object-cover rounded shrink-0 bg-zinc-800" referrerPolicy="no-referrer" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 11'%3E%3Crect width='8' height='11' fill='%2318181b'/%3E%3C/svg%3E" }} />
               <div className="flex-1 min-w-0">
                 <p className="text-white text-sm truncate">{anime.title}</p>
                 <p className="text-zinc-600 text-xs mt-0.5">

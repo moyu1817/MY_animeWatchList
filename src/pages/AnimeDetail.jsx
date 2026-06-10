@@ -25,7 +25,7 @@ function TrailerEmbed({ embedUrl, title }) {
 
   return (
     <button className="relative block w-full h-full cursor-pointer group" onClick={() => setPlaying(true)} aria-label={`Play ${title} trailer`}>
-      <img src={thumbnail} alt="" aria-hidden="true" className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none' }} />
+      <img src={thumbnail} alt="" aria-hidden="true" className="w-full h-full object-cover" referrerPolicy="no-referrer" onError={e => { e.currentTarget.style.display = 'none' }} />
       <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/25 transition-colors">
         <div className="w-14 h-14 rounded-full bg-black/70 border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white" aria-hidden="true">
@@ -180,6 +180,7 @@ export function AnimeDetail() {
           alt=""
           className="absolute inset-0 w-full h-full object-cover scale-110"
           style={{ filter: 'blur(22px) brightness(0.25)' }}
+          referrerPolicy="no-referrer"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/75 to-black/30" />
       </div>
@@ -195,6 +196,7 @@ export function AnimeDetail() {
               src={image}
               alt={title}
               className="w-44 rounded-md border border-zinc-800 shadow-2xl shadow-black bg-zinc-900"
+              referrerPolicy="no-referrer"
               onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='3' height='4' fill='%2318181b'/%3E%3C/svg%3E" }}
             />
             <div className="mt-3 w-44 space-y-2">
@@ -301,7 +303,7 @@ export function AnimeDetail() {
                   const jpVA = voice_actors?.find(v => v.language === 'Japanese')
                   return (
                     <div key={character.mal_id} className="bg-zinc-900 border border-zinc-800 rounded-md overflow-hidden flex gap-3 p-3 items-start">
-                      <img src={character.images?.jpg?.image_url} alt={character.name} className="w-12 h-16 object-cover rounded shrink-0 bg-zinc-800" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='3' height='4' fill='%2318181b'/%3E%3C/svg%3E" }} />
+                      <img src={character.images?.jpg?.image_url} alt={character.name} className="w-12 h-16 object-cover rounded shrink-0 bg-zinc-800" referrerPolicy="no-referrer" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2020/svg' viewBox='0 0 3 4'%3E%3Crect width='3' height='4' fill='%2318181b'/%3E%3C/svg%3E" }} />
                       <div className="min-w-0">
                         <p className="text-white text-xs font-medium truncate">{character.name}</p>
                         <p className="text-zinc-600 text-xs mt-0.5">{role}</p>
@@ -344,7 +346,7 @@ export function AnimeDetail() {
                   className="flex gap-4 bg-zinc-900 border border-zinc-800 rounded-md p-4 hover:border-emerald-500/30 transition-colors group"
                 >
                   {article.images?.jpg?.image_url && (
-                    <img src={article.images.jpg.image_url} alt="" className="w-20 h-14 object-cover rounded shrink-0" />
+                    <img src={article.images.jpg.image_url} alt="" className="w-20 h-14 object-cover rounded shrink-0" referrerPolicy="no-referrer" />
                   )}
                   <div className="min-w-0">
                     <p className="text-white text-sm font-medium group-hover:text-emerald-400 transition-colors line-clamp-2">{article.title}</p>
