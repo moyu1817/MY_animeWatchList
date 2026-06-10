@@ -43,15 +43,15 @@ export function Search() {
   const urlQuery = searchParams.get('q') ?? ''
   const urlGenre = searchParams.get('genre')
 
-  const [type,        setType]        = useState('All')
-  const [status,      setStatus]      = useState('')
-  const [sort,        setSort]        = useState('popularity')
-  const [genres,      setGenres]      = useState(() => urlGenre ? [urlGenre] : [])
+  const [type,           setType]           = useState('All')
+  const [status,         setStatus]         = useState('')
+  const [sort,           setSort]           = useState('popularity')
+  const [genres,         setGenres]         = useState(() => urlGenre ? [urlGenre] : [])
   const [tags,           setTags]           = useState([])
   const [showMoreTags,   setShowMoreTags]   = useState(false)
   const [showMoreGenres, setShowMoreGenres] = useState(false)
   const [filtersOpen,    setFiltersOpen]    = useState(true)
-  const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
+  const [prevUrlQuery,   setPrevUrlQuery]   = useState(urlQuery)
 
   usePageTitle(
     urlQuery      ? `Search: ${urlQuery}` :
@@ -65,6 +65,7 @@ export function Search() {
   if (prevUrlQuery !== urlQuery) {
     setPrevUrlQuery(urlQuery)
     setType('All'); setStatus(''); setGenres([]); setSort('popularity'); setTags([])
+    setShowMoreTags(false); setShowMoreGenres(false)
   }
 
   const { data: genresData, isLoading: genresLoading } = useQuery({
@@ -112,8 +113,8 @@ export function Search() {
           <h1 className="text-xl font-bold text-white">
             {urlQuery
               ? <>Results for <span className="text-emerald-400">"{urlQuery}"</span></>
-              : genres.length > 0
-              ? <>Browsing <span className="text-emerald-400">{genres.join(' · ')}</span></>
+              : genres.length > 0 || tags.length > 0
+              ? <>Browsing <span className="text-emerald-400">{[...genres, ...tags].join(' · ')}</span></>
               : 'Browse Anime'
             }
           </h1>
@@ -142,24 +143,22 @@ export function Search() {
       {/* Popular Tags row */}
       <div className="mb-5">
         <span className="text-zinc-500 text-xs uppercase tracking-wide block mb-2">Popular Tags</span>
-        <div className="flex items-start gap-3">
-          <div className="flex flex-wrap gap-2 flex-1">
-            {(showMoreTags ? [...POPULAR_TAGS, ...EXTRA_TAGS] : POPULAR_TAGS).map(tag => {
-              const isActive = tags.includes(tag)
-              return (
-                <button
-                  key={tag}
-                  onClick={() => toggleTag(tag)}
-                  className={`${btnBase} ${isActive ? btnActive : btnInactive}`}
-                >
-                  {tag}{isActive && ' ×'}
-                </button>
-              )
-            })}
-          </div>
+        <div className="flex flex-wrap gap-2">
+          {(showMoreTags ? [...POPULAR_TAGS, ...EXTRA_TAGS] : POPULAR_TAGS).map(tag => {
+            const isActive = tags.includes(tag)
+            return (
+              <button
+                key={tag}
+                onClick={() => toggleTag(tag)}
+                className={`${btnBase} ${isActive ? btnActive : btnInactive}`}
+              >
+                {tag}{isActive && ' ×'}
+              </button>
+            )
+          })}
           <button
             onClick={() => setShowMoreTags(v => !v)}
-            className="shrink-0 px-3 py-1 rounded-md text-sm border border-dashed border-zinc-700 text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 transition-colors cursor-pointer"
+            className="px-3 py-1 rounded-md text-sm border border-dashed border-zinc-700 text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 transition-colors cursor-pointer"
           >
             {showMoreTags ? 'Show less ↑' : `+ ${EXTRA_TAGS.length} more`}
           </button>
@@ -173,30 +172,28 @@ export function Search() {
           {/* Genre */}
           <div>
             <span className={filterLabel}>Genre</span>
-            <div className="flex items-start gap-3">
-              <div className="flex flex-wrap gap-2 flex-1">
-                {genresLoading
-                  ? Array.from({ length: 8 }).map((_, i) => (
-                      <div key={i} className="h-7 w-20 bg-zinc-900 border border-zinc-800 rounded-md animate-pulse" />
-                    ))
-                  : (showMoreGenres ? allGenres : allGenres.slice(0, 8)).map(g => {
-                      const isActive = genres.includes(g.name)
-                      return (
-                        <button
-                          key={g.mal_id}
-                          onClick={() => toggleGenre(g.name)}
-                          className={`${btnBase} ${isActive ? btnActive : btnInactive}`}
-                        >
-                          {g.name}{isActive && ' ×'}
-                        </button>
-                      )
-                    })
-                }
-              </div>
+            <div className="flex flex-wrap gap-2">
+              {genresLoading
+                ? Array.from({ length: 8 }).map((_, i) => (
+                    <div key={i} className="h-7 w-20 bg-zinc-900 border border-zinc-800 rounded-md animate-pulse" />
+                  ))
+                : (showMoreGenres ? allGenres : allGenres.slice(0, 8)).map(g => {
+                    const isActive = genres.includes(g.name)
+                    return (
+                      <button
+                        key={g.mal_id}
+                        onClick={() => toggleGenre(g.name)}
+                        className={`${btnBase} ${isActive ? btnActive : btnInactive}`}
+                      >
+                        {g.name}{isActive && ' ×'}
+                      </button>
+                    )
+                  })
+              }
               {!genresLoading && (
                 <button
                   onClick={() => setShowMoreGenres(v => !v)}
-                  className="shrink-0 px-3 py-1 rounded-md text-sm border border-dashed border-zinc-700 text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 transition-colors cursor-pointer"
+                  className="px-3 py-1 rounded-md text-sm border border-dashed border-zinc-700 text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 transition-colors cursor-pointer"
                 >
                   {showMoreGenres ? 'Show less ↑' : `+ ${allGenres.length - 8} more`}
                 </button>
