@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { AnimeCard } from '../components/AnimeCard'
@@ -70,81 +70,121 @@ export function Home() {
     queryKey: ['upcoming', 1],
     queryFn: () => getUpcomingAnime(1),
   })
-  const featured = upcomingData?.data?.[0]
+
+  const featuredList = (upcomingData?.data ?? []).slice(0, 5)
+  const [heroIdx, setHeroIdx] = useState(0)
+  const [paused, setPaused] = useState(false)
   const { recentlyViewed } = useRecentlyViewed()
   const recentRef = useRef(null)
   usePageTitle('Home')
 
-  const featuredTitle = featured ? (featured.title_english ?? featured.title) : null
+  useEffect(() => {
+    if (featuredList.length <= 1 || paused) return
+    const id = setInterval(() => setHeroIdx(i => (i + 1) % featuredList.length), 6000)
+    return () => clearInterval(id)
+  }, [featuredList.length, paused])
 
   return (
     <div className="py-8 page-fade">
-      {/* Hero */}
+      {/* Hero carousel */}
       <div className="px-4 max-w-7xl mx-auto mb-10">
-        <div className="relative rounded-xl overflow-hidden min-h-64 md:min-h-80 flex items-end bg-zinc-950 border border-zinc-900">
-          {featured && (
-            <img src={featured.images?.jpg?.large_image_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-35" referrerPolicy="no-referrer" />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-          <div className="relative p-6 md:p-10 max-w-2xl">
-            <p className="text-emerald-400 text-xs mb-2 font-semibold tracking-widest uppercase">Upcoming Anime</p>
-            {featured ? (
-              <>
-                <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">{featuredTitle}</h1>
+        <div
+          className="relative rounded-xl overflow-hidden min-h-64 md:min-h-80 bg-zinc-950 border border-zinc-900"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          {featuredList.length > 0 ? featuredList.map((item, i) => {
+            const itemTitle = item.title_english ?? item.title
+            const isActive = i === heroIdx
+            return (
+              <div
+                key={item.mal_id}
+                className={`absolute inset-0 flex items-end transition-opacity duration-700 ${isActive ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+                aria-hidden={!isActive}
+              >
+                <img
+                  src={item.images?.jpg?.large_image_url}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover opacity-35"
+                  referrerPolicy="no-referrer"
+                  data-pin-nopin="true"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                <div className="relative p-6 md:p-10 max-w-2xl">
+                  <p className="text-emerald-400 text-xs mb-2 font-semibold tracking-widest uppercase">Upcoming Anime</p>
+                  <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">{itemTitle}</h1>
 
-                {/* Metadata badges */}
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {featured.score && <span className="bg-black/50 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-xs">★ {featured.score}</span>}
-                  {featured.type && <span className="bg-black/50 text-zinc-300 border border-zinc-700 px-2 py-0.5 rounded text-xs">{featured.type}</span>}
-                  {featured.episodes && <span className="bg-black/50 text-zinc-300 border border-zinc-700 px-2 py-0.5 rounded text-xs">{featured.episodes} eps</span>}
-                  {featured.aired?.from && (
-                    <span className="bg-black/50 text-zinc-300 border border-zinc-700 px-2 py-0.5 rounded text-xs">
-                      {new Date(featured.aired.from).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </span>
-                  )}
-                </div>
-
-                {/* Genres */}
-                {featured.genres?.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {featured.genres.slice(0, 3).map(g => (
-                      <span key={g.mal_id} className="text-xs text-zinc-400 bg-zinc-900/70 border border-zinc-700/50 px-2 py-0.5 rounded">{g.name}</span>
-                    ))}
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {item.score && <span className="bg-black/50 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-xs">★ {item.score}</span>}
+                    {item.type && <span className="bg-black/50 text-zinc-300 border border-zinc-700 px-2 py-0.5 rounded text-xs">{item.type}</span>}
+                    {item.episodes && <span className="bg-black/50 text-zinc-300 border border-zinc-700 px-2 py-0.5 rounded text-xs">{item.episodes} eps</span>}
+                    {item.aired?.from && (
+                      <span className="bg-black/50 text-zinc-300 border border-zinc-700 px-2 py-0.5 rounded text-xs">
+                        {new Date(item.aired.from).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                    )}
                   </div>
-                )}
 
-                {/* Synopsis */}
-                {featured.synopsis && (
-                  <p className="text-zinc-400 text-sm line-clamp-2 mb-4 leading-relaxed">{featured.synopsis}</p>
-                )}
+                  {item.genres?.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mb-3">
+                      {item.genres.slice(0, 3).map(g => (
+                        <span key={g.mal_id} className="text-xs text-zinc-400 bg-zinc-900/70 border border-zinc-700/50 px-2 py-0.5 rounded">{g.name}</span>
+                      ))}
+                    </div>
+                  )}
 
-                <div className="flex flex-wrap gap-3">
-                  <Link
-                    to={`/anime/${featured.mal_id}`}
-                    className="inline-block bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-2 rounded-md text-sm font-semibold transition-colors"
-                  >
-                    View Details
-                  </Link>
-                  <WatchlistButton
-                    anime={{
-                      mal_id: featured.mal_id,
-                      title: featuredTitle,
-                      image_url: featured.images?.jpg?.large_image_url,
-                      score: featured.score ?? null,
-                      episodes: featured.episodes ?? null,
-                    }}
-                    className="px-5"
-                  />
+                  {item.synopsis && (
+                    <p className="text-zinc-400 text-sm line-clamp-2 mb-4 leading-relaxed">{item.synopsis}</p>
+                  )}
+
+                  <div className="flex flex-wrap gap-3">
+                    <Link
+                      to={`/anime/${item.mal_id}`}
+                      className="inline-block bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-2 rounded-md text-sm font-semibold transition-colors"
+                    >
+                      View Details
+                    </Link>
+                    <WatchlistButton
+                      anime={{
+                        mal_id: item.mal_id,
+                        title: itemTitle,
+                        image_url: item.images?.jpg?.large_image_url,
+                        score: item.score ?? null,
+                        episodes: item.episodes ?? null,
+                      }}
+                      className="px-5"
+                    />
+                  </div>
                 </div>
-              </>
-            ) : (
+              </div>
+            )
+          }) : (
+            <div className="absolute inset-0 flex items-end p-6 md:p-10">
               <div className="space-y-2">
                 <div className="h-8 w-64 bg-zinc-800 rounded animate-pulse" />
                 <div className="h-4 w-40 bg-zinc-800 rounded animate-pulse" />
                 <div className="h-4 w-56 bg-zinc-800 rounded animate-pulse" />
               </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* Dot navigation */}
+          {featuredList.length > 1 && (
+            <div className="absolute bottom-4 right-5 flex gap-1.5 z-20">
+              {featuredList.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => { setHeroIdx(i); setPaused(false) }}
+                  aria-label={`Go to slide ${i + 1}`}
+                  className={`rounded-full transition-all duration-300 cursor-pointer ${
+                    i === heroIdx
+                      ? 'w-5 h-1.5 bg-emerald-400'
+                      : 'w-1.5 h-1.5 bg-white/30 hover:bg-white/60'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
