@@ -1,11 +1,10 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
 import { searchAllAnime, getGenres } from '../services/anilistApi'
 import { usePageTitle } from '../hooks/usePageTitle'
-import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
 import { dedupByMalId } from '../utils/anime'
 
 const TYPES    = ['All', 'TV', 'Movie', 'OVA', 'ONA', 'Special']
@@ -19,6 +18,7 @@ const STATUSES = [
 const btnBase     = 'px-3 py-1 rounded-md text-sm transition-colors cursor-pointer'
 const btnActive   = 'bg-emerald-500 text-black font-semibold'
 const btnInactive = 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600'
+const paginationBtn = 'px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-md text-sm text-zinc-400 disabled:opacity-30 hover:bg-zinc-800 hover:text-white transition-colors cursor-pointer disabled:cursor-default'
 
 export function Search() {
   const [searchParams] = useSearchParams()
@@ -28,6 +28,7 @@ export function Search() {
   const [type,   setType]   = useState('All')
   const [status, setStatus] = useState('')
   const [genres, setGenres] = useState(() => urlGenre ? [urlGenre] : [])
+  const [page,   setPage]   = useState(1)
   const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
 
   usePageTitle(
@@ -36,12 +37,12 @@ export function Search() {
   )
 
   useEffect(() => {
-    if (urlGenre) setGenres([urlGenre])
+    if (urlGenre) { setGenres([urlGenre]); setPage(1) }
   }, [urlGenre])
 
   if (prevUrlQuery !== urlQuery) {
     setPrevUrlQuery(urlQuery)
-    setType('All'); setStatus(''); setGenres([])
+    setType('All'); setStatus(''); setGenres([]); setPage(1)
   }
 
   const { data: genresData, isLoading: genresLoading } = useQuery({
@@ -53,22 +54,17 @@ export function Search() {
   const allGenres = genresData?.data ?? []
   const typeParam = type === 'All' ? '' : type.toLowerCase()
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
-    queryKey: ['search-all', urlQuery, typeParam, status, genres],
-    queryFn:  ({ pageParam = 1 }) => searchAllAnime(urlQuery, pageParam, typeParam, status, genres),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      const { has_next_page, current_page } = lastPage.pagination ?? {}
-      return has_next_page ? (current_page ?? 1) + 1 : undefined
-    },
+  const { data, isLoading } = useQuery({
+    queryKey: ['search-all', urlQuery, typeParam, status, genres, page],
+    queryFn:  () => searchAllAnime(urlQuery, page, typeParam, status, genres),
   })
 
-  const items       = useMemo(() => dedupByMalId(data?.pages.flatMap(p => p.data ?? []) ?? []), [data])
-  const sentinelRef = useInfiniteScroll(fetchNextPage, hasNextPage && !isFetchingNextPage)
-  const total       = data?.pages?.[0]?.pagination?.items?.total ?? null
+  const items       = dedupByMalId(data?.data ?? [])
+  const hasNextPage = data?.pagination?.has_next_page ?? false
 
   function toggleGenre(name) {
     setGenres(prev => prev.includes(name) ? prev.filter(g => g !== name) : [...prev, name])
+    setPage(1)
   }
 
   const hasActiveFilters = type !== 'All' || status !== '' || genres.length > 0
@@ -86,9 +82,6 @@ export function Search() {
             : 'Popular Anime'
           }
         </h1>
-        {!isLoading && total !== null && (
-          <p className="text-zinc-600 text-sm mt-1">{total.toLocaleString()} results</p>
-        )}
       </div>
 
       {/* Filters */}
@@ -123,18 +116,18 @@ export function Search() {
           <div className="flex gap-2 flex-wrap items-center">
             <span className="text-zinc-600 text-xs uppercase tracking-wide">Type</span>
             {TYPES.map(t => (
-              <button key={t} onClick={() => setType(t)} className={`${btnBase} ${type === t ? btnActive : btnInactive}`}>{t}</button>
+              <button key={t} onClick={() => { setType(t); setPage(1) }} className={`${btnBase} ${type === t ? btnActive : btnInactive}`}>{t}</button>
             ))}
           </div>
           <div className="flex gap-2 flex-wrap items-center">
             <span className="text-zinc-600 text-xs uppercase tracking-wide">Status</span>
             {STATUSES.map(s => (
-              <button key={s.value} onClick={() => setStatus(s.value)} className={`${btnBase} ${status === s.value ? btnActive : btnInactive}`}>{s.label}</button>
+              <button key={s.value} onClick={() => { setStatus(s.value); setPage(1) }} className={`${btnBase} ${status === s.value ? btnActive : btnInactive}`}>{s.label}</button>
             ))}
           </div>
           {hasActiveFilters && (
             <button
-              onClick={() => { setType('All'); setStatus(''); setGenres([]) }}
+              onClick={() => { setType('All'); setStatus(''); setGenres([]); setPage(1) }}
               className="px-3 py-1 rounded-md text-sm text-zinc-500 hover:text-white border border-zinc-800 hover:border-zinc-600 bg-zinc-900 transition-colors cursor-pointer self-center"
             >
               Clear filters ×
@@ -144,21 +137,23 @@ export function Search() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-8">
         {isLoading
-          ? Array.from({ length: 20 }).map((_, i) => <SkeletonCard key={i} />)
+          ? Array.from({ length: 25 }).map((_, i) => <SkeletonCard key={i} />)
           : items.map(anime => <AnimeCard key={anime.mal_id} anime={anime} />)
         }
-        {isFetchingNextPage && Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={`next-${i}`} />)}
       </div>
 
       {!isLoading && items.length === 0 && (
         <p className="text-center text-zinc-600 py-12">No results found. Try adjusting your filters.</p>
       )}
 
-      <div ref={sentinelRef} />
-      {!isLoading && !hasNextPage && items.length > 0 && (
-        <p className="text-center text-zinc-700 text-sm py-4">All {items.length} results loaded.</p>
+      {!isLoading && items.length > 0 && (
+        <div className="flex justify-center items-center gap-3">
+          <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className={paginationBtn}>← Prev</button>
+          <span className="text-zinc-500 text-sm">Page {page}</span>
+          <button onClick={() => setPage(p => p + 1)} disabled={!hasNextPage} className={paginationBtn}>Next →</button>
+        </div>
       )}
     </div>
   )
