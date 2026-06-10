@@ -82,7 +82,7 @@ export function Search() {
             ? <>Results for <span className="text-emerald-400">"{urlQuery}"</span></>
             : genres.length > 0
             ? <>Browsing <span className="text-emerald-400">{genres.join(' · ')}</span></>
-            : 'Popular Anime'
+            : 'Browse Anime'
           }
         </h1>
       </div>
@@ -92,7 +92,7 @@ export function Search() {
 
         {/* Genre chips */}
         <div>
-          <span className="text-zinc-600 text-xs uppercase tracking-wide block mb-2">Category</span>
+          <span className="text-zinc-600 text-xs uppercase tracking-wide block mb-2">Genre</span>
           <div className="flex flex-wrap gap-2">
             {genresLoading
               ? Array.from({ length: 18 }).map((_, i) => (

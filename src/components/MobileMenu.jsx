@@ -6,7 +6,7 @@ import { useTheme } from '../context/ThemeContext'
 const LINKS = [
   { to: '/', label: 'Home', end: true },
   { to: '/featured', label: 'Featured' },
-  { to: '/search', label: 'Categories' },
+  { to: '/search', label: 'Browse' },
   { to: '/seasons', label: 'Seasons' },
   { to: '/schedule', label: 'Schedule' },
   { to: '/watchlist', label: 'Watchlist' },

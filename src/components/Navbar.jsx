@@ -64,7 +64,7 @@ export function Navbar() {
         <div className="hidden lg:flex items-center gap-5">
           <NavLink to="/" end className={linkClass}>Home</NavLink>
           <NavLink to="/featured" className={linkClass}>Featured</NavLink>
-          <NavLink to="/search" className={linkClass}>Categories</NavLink>
+          <NavLink to="/search" className={linkClass}>Browse</NavLink>
           <NavLink to="/seasons" className={linkClass}>Seasons</NavLink>
           <NavLink to="/schedule" className={linkClass}>Schedule</NavLink>
           <NavLink to="/watchlist" className={linkClass}>
