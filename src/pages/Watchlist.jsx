@@ -175,7 +175,7 @@ export function Watchlist() {
               {group.map(anime => (
                 <div key={anime.mal_id} className="flex items-center gap-3 bg-zinc-900 rounded-md p-3 border border-zinc-800 hover:border-zinc-700 transition-colors">
                   <Link to={`/anime/${anime.mal_id}`} className="shrink-0">
-                    <img src={anime.image_url} alt={anime.title} className="w-10 h-14 object-cover rounded bg-zinc-800" referrerPolicy="no-referrer" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = IMG_FALLBACK }} />
+                    <img src={anime.image_url} alt={anime.title} className="w-14 h-20 object-cover rounded bg-zinc-800" referrerPolicy="no-referrer" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = IMG_FALLBACK }} />
                   </Link>
                   <div className="flex-1 min-w-0">
                     <Link to={`/anime/${anime.mal_id}`} className="font-medium text-white hover:text-emerald-400 text-sm block truncate transition-colors">

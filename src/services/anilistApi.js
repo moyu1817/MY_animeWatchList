@@ -61,6 +61,7 @@ function normalizeMedia(m) {
         large_image_url: m.coverImage?.large  ?? '',
       },
     },
+    bannerImage: m.bannerImage ?? null,
     score:    m.meanScore ? +(m.meanScore / 10).toFixed(1) : null,
     episodes: m.episodes  ?? null,
     type:     FORMAT_MAP[m.format]  ?? m.format  ?? null,
@@ -88,6 +89,7 @@ const MEDIA_FIELDS = `
   title { romaji english }
   coverImage { large medium }
   meanScore episodes format status genres
+  description(asHtml:false)
   studios(isMain: true) { nodes { name } }
   startDate { year month day }
   nextAiringEpisode { airingAt episode }

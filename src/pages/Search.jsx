@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
@@ -23,12 +23,20 @@ const btnInactive = 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text
 export function Search() {
   const [searchParams] = useSearchParams()
   const urlQuery = searchParams.get('q') ?? ''
-  usePageTitle(urlQuery ? `Search: ${urlQuery}` : 'Browse')
+  const urlGenre = searchParams.get('genre')
+  usePageTitle(urlQuery ? `Search: ${urlQuery}` : urlGenre ? `Genre: ${urlGenre}` : 'Browse')
 
   const [type, setType] = useState('All')
   const [status, setStatus] = useState('')
-  const [genre, setGenre] = useState(null)
+  const [genre, setGenre] = useState(() => urlGenre ? { mal_id: 0, name: urlGenre } : null)
   const [page, setPage] = useState(1)
+
+  useEffect(() => {
+    if (urlGenre) {
+      setGenre({ mal_id: 0, name: urlGenre })
+      setPage(1)
+    }
+  }, [urlGenre])
   const [showAllGenres, setShowAllGenres] = useState(false)
   const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
 

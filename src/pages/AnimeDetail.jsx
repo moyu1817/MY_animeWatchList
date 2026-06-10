@@ -179,7 +179,7 @@ export function AnimeDetail() {
 
   const title = anime.title_english ?? anime.title
   const image = anime.images?.jpg?.large_image_url
-  const banner = anime.images?.jpg?.large_image_url
+  const banner = anime.bannerImage ?? anime.images?.jpg?.large_image_url
 
   return (
     <div className="page-fade">
@@ -245,7 +245,7 @@ export function AnimeDetail() {
             {anime.genres?.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-4">
                 {anime.genres.map(g => (
-                  <Link key={g.mal_id} to={`/upcoming?genre=${encodeURIComponent(g.name)}`} className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-md text-xs hover:bg-emerald-500/20 transition-colors">{g.name}</Link>
+                  <Link key={g.mal_id} to={`/search?genre=${encodeURIComponent(g.name)}`} className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-md text-xs hover:bg-emerald-500/20 transition-colors">{g.name}</Link>
                 ))}
               </div>
             )}

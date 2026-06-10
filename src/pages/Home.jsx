@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
+import { WatchlistButton } from '../components/WatchlistButton'
 import { getUpcomingAnime, getCurrentSeason, getTopAnime } from '../services/anilistApi'
 import { useRecentlyViewed } from '../context/RecentlyViewedContext'
 import { usePageTitle } from '../hooks/usePageTitle'
@@ -39,7 +40,6 @@ function AnimeRow({ title, queryKey, queryFn, linkTo }) {
         </div>
       </div>
 
-      {/* Right-edge fade indicates more content */}
       <div className="relative">
         <div ref={rowRef} className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
           {isLoading || (isFetching && items.length === 0)
@@ -75,39 +75,77 @@ export function Home() {
   const recentRef = useRef(null)
   usePageTitle('Home')
 
+  const featuredTitle = featured ? (featured.title_english ?? featured.title) : null
+
   return (
     <div className="py-8 page-fade">
       {/* Hero */}
       <div className="px-4 max-w-7xl mx-auto mb-10">
-        <div className="relative rounded-xl overflow-hidden h-64 md:h-80 flex items-end bg-zinc-950 border border-zinc-900">
+        <div className="relative rounded-xl overflow-hidden min-h-64 md:min-h-80 flex items-end bg-zinc-950 border border-zinc-900">
           {featured && (
             <img src={featured.images?.jpg?.large_image_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-35" referrerPolicy="no-referrer" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-          <div className="relative p-6 md:p-10">
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+          <div className="relative p-6 md:p-10 max-w-2xl">
             <p className="text-emerald-400 text-xs mb-2 font-semibold tracking-widest uppercase">Upcoming Anime</p>
             {featured ? (
               <>
-                <h1 className="text-2xl md:text-4xl font-bold text-white mb-4">
-                  {featured.title_english ?? featured.title}
-                </h1>
-                <Link
-                  to={`/anime/${featured.mal_id}`}
-                  className="inline-block bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-2 rounded-md text-sm font-semibold transition-colors"
-                >
-                  View Details
-                </Link>
+                <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">{featuredTitle}</h1>
+
+                {/* Metadata badges */}
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {featured.score && <span className="bg-black/50 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-xs">★ {featured.score}</span>}
+                  {featured.type && <span className="bg-black/50 text-zinc-300 border border-zinc-700 px-2 py-0.5 rounded text-xs">{featured.type}</span>}
+                  {featured.episodes && <span className="bg-black/50 text-zinc-300 border border-zinc-700 px-2 py-0.5 rounded text-xs">{featured.episodes} eps</span>}
+                  {featured.aired?.from && (
+                    <span className="bg-black/50 text-zinc-300 border border-zinc-700 px-2 py-0.5 rounded text-xs">
+                      {new Date(featured.aired.from).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </span>
+                  )}
+                </div>
+
+                {/* Genres */}
+                {featured.genres?.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {featured.genres.slice(0, 3).map(g => (
+                      <span key={g.mal_id} className="text-xs text-zinc-400 bg-zinc-900/70 border border-zinc-700/50 px-2 py-0.5 rounded">{g.name}</span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Synopsis */}
+                {featured.synopsis && (
+                  <p className="text-zinc-400 text-sm line-clamp-2 mb-4 leading-relaxed">{featured.synopsis}</p>
+                )}
+
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    to={`/anime/${featured.mal_id}`}
+                    className="inline-block bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-2 rounded-md text-sm font-semibold transition-colors"
+                  >
+                    View Details
+                  </Link>
+                  <WatchlistButton anime={{
+                    mal_id: featured.mal_id,
+                    title: featuredTitle,
+                    image_url: featured.images?.jpg?.large_image_url,
+                    score: featured.score ?? null,
+                    episodes: featured.episodes ?? null,
+                  }} />
+                </div>
               </>
             ) : (
-              <div className="h-8 w-64 bg-zinc-800 rounded animate-pulse" />
+              <div className="space-y-2">
+                <div className="h-8 w-64 bg-zinc-800 rounded animate-pulse" />
+                <div className="h-4 w-40 bg-zinc-800 rounded animate-pulse" />
+                <div className="h-4 w-56 bg-zinc-800 rounded animate-pulse" />
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Rows — full width with px padding handled inside */}
       <div className="px-4 max-w-7xl mx-auto">
-
         {recentlyViewed.length > 0 && (
           <section className="mb-10">
             <div className="flex items-center justify-between mb-4">
@@ -130,7 +168,7 @@ export function Home() {
         )}
 
         <AnimeRow title="Upcoming This Season"  queryKey={['upcoming', 1]}                queryFn={() => getUpcomingAnime(1)}                linkTo="/upcoming" />
-        <AnimeRow title="Currently Airing"       queryKey={['current', 1]}                queryFn={() => getCurrentSeason(1)}                linkTo="/upcoming" />
+        <AnimeRow title="Currently Airing"       queryKey={['current', 1]}                queryFn={() => getCurrentSeason(1)}                linkTo="/seasons" />
         <AnimeRow title="Top Rated All Time"     queryKey={['top', '', '', 1]}             queryFn={() => getTopAnime(1, '', '')}             linkTo="/featured" />
         <AnimeRow title="Most Popular"           queryKey={['top', 'bypopularity', '', 1]} queryFn={() => getTopAnime(1, '', 'bypopularity')} linkTo="/featured" />
       </div>

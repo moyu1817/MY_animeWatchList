@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { useDebounce } from '../hooks/useDebounce'
 import { getSearchSuggestions, getRandomAnime } from '../services/anilistApi'
-import { ThemeToggle } from './ThemeToggle'
 import { MobileMenu } from './MobileMenu'
 import { IMG_FALLBACK } from '../utils/images'
 
@@ -94,7 +93,6 @@ export function Navbar() {
               </svg>
             )}
           </button>
-          <ThemeToggle />
           <form onSubmit={handleSearch} className="flex items-center gap-2">
             <div className="relative" ref={containerRef}>
               <input
@@ -141,7 +139,6 @@ export function Navbar() {
 
         {/* Mobile right side */}
         <div className="flex lg:hidden items-center gap-2 ml-auto">
-          <ThemeToggle />
           <button
             onClick={() => navigate('/search')}
             className="w-8 h-8 flex items-center justify-center rounded-md border border-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer"

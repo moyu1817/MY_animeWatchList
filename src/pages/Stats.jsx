@@ -40,7 +40,7 @@ export function Stats() {
   const total = watchlist.length
   const completed = watchlist.filter(a => a.status === 'completed')
   const watching = watchlist.filter(a => a.status === 'watching')
-  const totalEpisodes = completed.reduce((sum, a) => sum + (a.episodes ?? 0), 0)
+  const totalEpisodes = [...completed, ...watching].reduce((sum, a) => sum + (a.episodes ?? 0), 0)
   const estimatedHours = Math.round(totalEpisodes * 24 / 60)
   const estimatedDays = (estimatedHours / 24).toFixed(1)
   const rated = watchlist.filter(a => a.rating != null)
@@ -71,7 +71,7 @@ export function Stats() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
         <StatCard label="Total Anime" value={total} />
         <StatCard label="Completed" value={completed.length} sub={`${completionRate}% completion`} />
-        <StatCard label="Episodes Watched" value={completed.length > 0 ? totalEpisodes.toLocaleString() : '—'} sub={completed.length > 0 ? `~${estimatedHours} hrs / ${estimatedDays} days` : 'no completed anime yet'} />
+        <StatCard label="Episodes" value={totalEpisodes > 0 ? totalEpisodes.toLocaleString() : '—'} sub={totalEpisodes > 0 ? `~${estimatedHours} hrs / ${estimatedDays} days` : 'complete or watch anime to track'} />
         <StatCard label="Mean Score" value={avgRating ?? '—'} sub={rated.length ? `from ${rated.length} rated` : 'none rated yet'} />
       </div>
 
