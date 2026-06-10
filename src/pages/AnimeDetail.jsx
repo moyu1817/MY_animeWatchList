@@ -10,8 +10,11 @@ import { usePageTitle } from '../hooks/usePageTitle'
 
 const TABS = ['Overview', 'Characters', 'Recommendations', 'News']
 
+const SAFE_EMBED = /^https:\/\/(www\.)?youtube(-nocookie)?\.com\/embed\//
+
 function TrailerEmbed({ embedUrl, title }) {
   const [playing, setPlaying] = useState(false)
+  if (!SAFE_EMBED.test(embedUrl)) return null
   const videoId = embedUrl.match(/\/embed\/([^?/]+)/)?.[1]
   const thumbnail = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null
   const src = playing ? `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}autoplay=1` : embedUrl

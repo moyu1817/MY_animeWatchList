@@ -1,6 +1,9 @@
 import { useEffect } from 'react'
 
+const SAFE_EMBED = /^https:\/\/(www\.)?youtube(-nocookie)?\.com\/embed\//
+
 export function TrailerModal({ embedUrl, title, onClose }) {
+  if (!SAFE_EMBED.test(embedUrl)) return null
   useEffect(() => {
     function handleKey(e) {
       if (e.key === 'Escape') onClose()
