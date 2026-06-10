@@ -65,6 +65,7 @@ export function Search() {
 
   const items       = useMemo(() => dedupByMalId(data?.pages.flatMap(p => p.data ?? []) ?? []), [data])
   const sentinelRef = useInfiniteScroll(fetchNextPage, hasNextPage && !isFetchingNextPage)
+  const total       = data?.pages?.[0]?.pagination?.items?.total ?? null
 
   function toggleGenre(name) {
     setGenres(prev => prev.includes(name) ? prev.filter(g => g !== name) : [...prev, name])
@@ -85,8 +86,8 @@ export function Search() {
             : 'Popular Anime'
           }
         </h1>
-        {!isLoading && items.length > 0 && (
-          <p className="text-zinc-600 text-sm mt-1">{items.length} anime loaded</p>
+        {!isLoading && total !== null && (
+          <p className="text-zinc-600 text-sm mt-1">{total.toLocaleString()} results</p>
         )}
       </div>
 
