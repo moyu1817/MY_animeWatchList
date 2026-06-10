@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
@@ -15,6 +15,28 @@ const STATUSES = [
   { label: 'Complete', value: 'complete' },
   { label: 'Upcoming', value: 'upcoming' },
 ]
+
+const GENRE_COLORS = {
+  'Action':        { bg: 'bg-red-950/60',      border: 'border-red-700/30',      text: 'text-red-300',      dot: 'bg-red-500' },
+  'Adventure':     { bg: 'bg-orange-950/60',   border: 'border-orange-700/30',   text: 'text-orange-300',   dot: 'bg-orange-500' },
+  'Comedy':        { bg: 'bg-yellow-950/60',   border: 'border-yellow-700/30',   text: 'text-yellow-300',   dot: 'bg-yellow-500' },
+  'Drama':         { bg: 'bg-violet-950/60',   border: 'border-violet-700/30',   text: 'text-violet-300',   dot: 'bg-violet-500' },
+  'Ecchi':         { bg: 'bg-pink-950/60',     border: 'border-pink-700/30',     text: 'text-pink-300',     dot: 'bg-pink-400' },
+  'Fantasy':       { bg: 'bg-blue-950/60',     border: 'border-blue-700/30',     text: 'text-blue-300',     dot: 'bg-blue-500' },
+  'Horror':        { bg: 'bg-red-950/80',      border: 'border-red-900/40',      text: 'text-red-400',      dot: 'bg-red-700' },
+  'Mahou Shoujo':  { bg: 'bg-rose-950/60',     border: 'border-rose-600/30',     text: 'text-rose-300',     dot: 'bg-rose-400' },
+  'Mecha':         { bg: 'bg-slate-900/80',    border: 'border-slate-600/30',    text: 'text-slate-300',    dot: 'bg-slate-500' },
+  'Music':         { bg: 'bg-cyan-950/60',     border: 'border-cyan-700/30',     text: 'text-cyan-300',     dot: 'bg-cyan-500' },
+  'Mystery':       { bg: 'bg-indigo-950/60',   border: 'border-indigo-700/30',   text: 'text-indigo-300',   dot: 'bg-indigo-500' },
+  'Psychological': { bg: 'bg-purple-950/60',   border: 'border-purple-700/30',   text: 'text-purple-300',   dot: 'bg-purple-500' },
+  'Romance':       { bg: 'bg-rose-950/60',     border: 'border-rose-700/30',     text: 'text-rose-300',     dot: 'bg-rose-500' },
+  'Sci-Fi':        { bg: 'bg-sky-950/60',      border: 'border-sky-700/30',      text: 'text-sky-300',      dot: 'bg-sky-500' },
+  'Slice of Life': { bg: 'bg-emerald-950/60',  border: 'border-emerald-700/30',  text: 'text-emerald-300',  dot: 'bg-emerald-500' },
+  'Sports':        { bg: 'bg-amber-950/60',    border: 'border-amber-700/30',    text: 'text-amber-300',    dot: 'bg-amber-500' },
+  'Supernatural':  { bg: 'bg-fuchsia-950/60',  border: 'border-fuchsia-700/30',  text: 'text-fuchsia-300',  dot: 'bg-fuchsia-500' },
+  'Thriller':      { bg: 'bg-zinc-900/80',     border: 'border-zinc-600/30',     text: 'text-zinc-300',     dot: 'bg-zinc-500' },
+}
+const GENRE_DEFAULT = { bg: 'bg-zinc-900/60', border: 'border-zinc-700/30', text: 'text-zinc-300', dot: 'bg-zinc-500' }
 
 const btnBase = 'px-3 py-1 rounded-md text-sm transition-colors cursor-pointer'
 const btnActive = 'bg-emerald-500 text-black font-semibold'
@@ -85,27 +107,26 @@ export function Search() {
   if (!hasFilter) {
     return (
       <div className="px-4 py-8 max-w-7xl mx-auto page-fade">
-        <h1 className="text-xl font-bold text-white mb-2">Browse by Category</h1>
-        <p className="text-zinc-600 text-sm mb-6">Select a genre or type in the search bar.</p>
-        <div className="flex flex-wrap gap-2">
+        <h1 className="text-xl font-bold text-white mb-1">Browse by Category</h1>
+        <p className="text-zinc-600 text-sm mb-8">Pick a genre to explore anime.</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {genresLoading
-            ? Array.from({ length: 28 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-8 bg-zinc-900 border border-zinc-800 rounded-md animate-pulse"
-                  style={{ width: `${['72px','88px','64px','96px','80px'][i % 5]}` }}
-                />
+            ? Array.from({ length: 18 }).map((_, i) => (
+                <div key={i} className="h-20 bg-zinc-900 border border-zinc-800 rounded-xl animate-pulse" />
               ))
-            : allGenres.map(g => (
-                <button
-                  key={g.mal_id}
-                  onClick={() => toggleGenre(g)}
-                  className="px-3 py-1.5 rounded-md text-sm bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-emerald-500/40 transition-colors cursor-pointer"
-                >
-                  {g.name}
-                  <span className="ml-1.5 text-zinc-700 text-xs">{g.count?.toLocaleString()}</span>
-                </button>
-              ))
+            : allGenres.map(g => {
+                const c = GENRE_COLORS[g.name] ?? GENRE_DEFAULT
+                return (
+                  <Link
+                    key={g.mal_id}
+                    to={`/search?genre=${encodeURIComponent(g.name)}`}
+                    className={`${c.bg} ${c.border} border rounded-xl p-4 flex flex-col gap-2.5 hover:brightness-125 transition-all cursor-pointer`}
+                  >
+                    <div className={`w-2 h-2 rounded-full ${c.dot}`} />
+                    <span className={`font-semibold text-sm ${c.text}`}>{g.name}</span>
+                  </Link>
+                )
+              })
           }
         </div>
       </div>
