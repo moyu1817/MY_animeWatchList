@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
-import { getSeasonsList, getSeasonAnime } from '../services/jikanApi'
+import { getSeasonsList, getSeasonAnime } from '../services/anilistApi'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { dedupByMalId } from '../utils/anime'
 
@@ -44,13 +44,14 @@ export function Seasons() {
 
   const items = dedupByMalId(animeData?.data ?? [])
   const lastPage = animeData?.pagination?.last_visible_page ?? 1
-  const availableYears = seasonsList ? [...new Set(seasonsList.map(s => s.year))].sort((a, b) => b - a) : []
-  const availableSeasons = seasonsList?.find(s => s.year === selectedYear)?.seasons ?? []
+  const list = seasonsList ?? []
+  const availableYears = list.length ? [...new Set(list.map(s => s.year))].sort((a, b) => b - a) : []
+  const availableSeasons = list.find(s => s.year === selectedYear)?.seasons ?? ['winter', 'spring', 'summer', 'fall']
 
   function selectYear(year) {
     setSelectedYear(year)
     setPage(1)
-    const seasons = seasonsList?.find(s => s.year === year)?.seasons ?? []
+    const seasons = list.find(s => s.year === year)?.seasons ?? ['winter', 'spring', 'summer', 'fall']
     if (seasons.length && !seasons.includes(selectedSeason)) setSelectedSeason(seasons[seasons.length - 1])
   }
 

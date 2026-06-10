@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
-import { searchAllAnime, getGenres } from '../services/jikanApi'
+import { searchAllAnime, getGenres } from '../services/anilistApi'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { dedupByMalId } from '../utils/anime'
 
@@ -53,8 +53,8 @@ export function Search() {
   const hasFilter = urlQuery.length > 0 || genre !== null
 
   const { data, isLoading } = useQuery({
-    queryKey: ['search-all', urlQuery, typeParam, status, genre?.mal_id ?? null, page],
-    queryFn: () => searchAllAnime(urlQuery, page, typeParam, status, genre?.mal_id ?? null),
+    queryKey: ['search-all', urlQuery, typeParam, status, genre?.name ?? null, page],
+    queryFn: () => searchAllAnime(urlQuery, page, typeParam, status, genre?.name ?? null),
     enabled: hasFilter,
   })
 
@@ -62,12 +62,14 @@ export function Search() {
   const total = data?.pagination?.items?.total ?? 0
   const lastPage = data?.pagination?.last_visible_page ?? 1
 
+
+
   function setFilter(setter) {
     return (value) => { setter(value); setPage(1) }
   }
 
   function toggleGenre(g) {
-    setGenre(prev => prev?.mal_id === g.mal_id ? null : g)
+    setGenre(prev => prev?.name === g.name ? null : g)
     setPage(1)
   }
 
@@ -133,7 +135,7 @@ export function Search() {
               <button
                 key={g.mal_id}
                 onClick={() => toggleGenre(g)}
-                className={`${btnBase} ${genre?.mal_id === g.mal_id ? btnActive : btnInactive}`}
+                className={`${btnBase} ${genre?.name === g.name ? btnActive : btnInactive}`}
               >
                 {g.name}
               </button>

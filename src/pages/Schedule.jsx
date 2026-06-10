@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
-import { getSchedule } from '../services/jikanApi'
+import { getSchedule } from '../services/anilistApi'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { dedupByMalId } from '../utils/anime'
 

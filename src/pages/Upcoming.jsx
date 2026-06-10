@@ -5,7 +5,7 @@ import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
 import { useDebounce } from '../hooks/useDebounce'
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
-import { getUpcomingAnime, searchAnime, searchAllAnime } from '../services/jikanApi'
+import { getUpcomingAnime, searchAnime, searchAllAnime } from '../services/anilistApi'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { dedupByMalId } from '../utils/anime'
 
@@ -22,12 +22,10 @@ export function Upcoming() {
   const [searchParams, setSearchParams] = useSearchParams()
   const debouncedSearch = useDebounce(search, 400)
   const isSearching = debouncedSearch.trim().length > 0
-  const genreId = searchParams.get('genre_id')
   const genreName = searchParams.get('genre')
-  const isGenreFilter = !!genreId && !isSearching
+  const isGenreFilter = !!genreName && !isSearching
 
   function clearGenre() {
-    searchParams.delete('genre_id')
     searchParams.delete('genre')
     setSearchParams(searchParams)
   }
@@ -36,17 +34,17 @@ export function Upcoming() {
     queryKey: isSearching
       ? ['upcoming-search', debouncedSearch]
       : isGenreFilter
-        ? ['upcoming-genre', genreId]
+        ? ['upcoming-genre', genreName]
         : ['upcoming-infinite'],
     queryFn: ({ pageParam }) => {
       if (isSearching) return searchAnime(debouncedSearch, pageParam)
-      if (isGenreFilter) return searchAllAnime('', pageParam, '', 'upcoming', genreId)
+      if (isGenreFilter) return searchAllAnime('', pageParam, '', 'upcoming', genreName)
       return getUpcomingAnime(pageParam)
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const { current_page, last_visible_page } = lastPage.pagination ?? {}
-      return current_page < last_visible_page ? current_page + 1 : undefined
+      return (current_page ?? 1) < (last_visible_page ?? 1) ? (current_page ?? 1) + 1 : undefined
     },
   })
 

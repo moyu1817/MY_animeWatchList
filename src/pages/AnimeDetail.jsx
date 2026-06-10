@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { getAnimeById, getAnimeCharacters, getAnimeRecommendations, getAnimeNews } from '../services/jikanApi'
+import { getAnimeById, getAnimeCharacters, getAnimeRecommendations, getAnimeRelated } from '../services/anilistApi'
 import { WatchlistButton } from '../components/WatchlistButton'
 import { AnimeCard } from '../components/AnimeCard'
 import { TrailerModal } from '../components/TrailerModal'
 import { useRecentlyViewed } from '../context/RecentlyViewedContext'
 import { usePageTitle } from '../hooks/usePageTitle'
 
-const TABS = ['Overview', 'Characters', 'Recommendations', 'News']
+const TABS = ['Overview', 'Characters', 'Recommendations', 'Related']
 
 const SAFE_EMBED = /^https:\/\/(www\.)?youtube(-nocookie)?\.com\/embed\//
 
@@ -68,10 +68,10 @@ export function AnimeDetail() {
     queryFn: () => getAnimeRecommendations(id),
     enabled: tab === 'Recommendations',
   })
-  const { data: news = [] } = useQuery({
-    queryKey: ['anime-news', id],
-    queryFn: () => getAnimeNews(id),
-    enabled: tab === 'News',
+  const { data: related = [] } = useQuery({
+    queryKey: ['anime-related', id],
+    queryFn: () => getAnimeRelated(id),
+    enabled: tab === 'Related',
   })
 
   usePageTitle(anime ? (anime.title_english ?? anime.title) : null)
@@ -244,7 +244,7 @@ export function AnimeDetail() {
             {anime.genres?.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-4">
                 {anime.genres.map(g => (
-                  <Link key={g.mal_id} to={`/upcoming?genre_id=${g.mal_id}&genre=${encodeURIComponent(g.name)}`} className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-md text-xs hover:bg-emerald-500/20 transition-colors">{g.name}</Link>
+                  <Link key={g.mal_id} to={`/upcoming?genre=${encodeURIComponent(g.name)}`} className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-md text-xs hover:bg-emerald-500/20 transition-colors">{g.name}</Link>
                 ))}
               </div>
             )}
@@ -344,26 +344,22 @@ export function AnimeDetail() {
           </div>
         )}
 
-        {/* News */}
-        {tab === 'News' && (
-          <div className="mt-8 space-y-4">
-            {news.length === 0 ? (
-              <p className="text-zinc-600 py-8 text-center">No news available.</p>
+        {/* Related */}
+        {tab === 'Related' && (
+          <div className="mt-8">
+            {related.length === 0 ? (
+              <p className="text-zinc-600 py-8 text-center">No related titles available.</p>
             ) : (
-              news.slice(0, 15).map(article => (
-                <a key={article.mal_id} href={article.url} target="_blank" rel="noopener noreferrer"
-                  className="flex gap-4 bg-zinc-900 border border-zinc-800 rounded-md p-4 hover:border-emerald-500/30 transition-colors group"
-                >
-                  {article.images?.jpg?.image_url && (
-                    <img src={article.images.jpg.image_url} alt="" className="w-20 h-14 object-cover rounded shrink-0" referrerPolicy="no-referrer" />
-                  )}
-                  <div className="min-w-0">
-                    <p className="text-white text-sm font-medium group-hover:text-emerald-400 transition-colors line-clamp-2">{article.title}</p>
-                    <p className="text-zinc-600 text-xs mt-1">{article.author_username} · {new Date(article.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                    {article.excerpt && <p className="text-zinc-500 text-xs mt-1 line-clamp-2">{article.excerpt}</p>}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                {related.map(({ relationType, entry }) => (
+                  <div key={entry.mal_id} className="relative flex flex-col">
+                    <span className="absolute top-2 left-2 z-10 bg-black/80 text-emerald-400 text-xs px-1.5 py-0.5 rounded capitalize">
+                      {relationType?.replace(/_/g, ' ').toLowerCase()}
+                    </span>
+                    <AnimeCard anime={entry} />
                   </div>
-                </a>
-              ))
+                ))}
+              </div>
             )}
           </div>
         )}

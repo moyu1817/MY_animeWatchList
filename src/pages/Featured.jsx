@@ -3,7 +3,7 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
-import { getTopAnime } from '../services/jikanApi'
+import { getTopAnime } from '../services/anilistApi'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { dedupByMalId } from '../utils/anime'
 
@@ -35,7 +35,7 @@ export function Featured() {
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const { current_page, last_visible_page } = lastPage.pagination ?? {}
-      return current_page < last_visible_page ? current_page + 1 : undefined
+      return (current_page ?? 1) < (last_visible_page ?? 1) ? (current_page ?? 1) + 1 : undefined
     },
   })
 

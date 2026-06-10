@@ -3,7 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { useDebounce } from '../hooks/useDebounce'
-import { getSearchSuggestions, getRandomAnime } from '../services/jikanApi'
+import { getSearchSuggestions, getRandomAnime } from '../services/anilistApi'
 import { ThemeToggle } from './ThemeToggle'
 import { MobileMenu } from './MobileMenu'
 
