@@ -129,13 +129,10 @@ export function Home() {
           </section>
         )}
 
-        <AnimeRow title="Upcoming This Season"  queryKey={['upcoming', 1]}               queryFn={() => getUpcomingAnime(1)}           linkTo="/upcoming" />
-        <AnimeRow title="Currently Airing"       queryKey={['current', 1]}                queryFn={() => getCurrentSeason(1)}           linkTo="/upcoming" />
-        <AnimeRow title="Top Airing Right Now"   queryKey={['top', 'airing', '', 1]}      queryFn={() => getTopAnime(1, '', 'airing')}  linkTo="/featured" />
-        <AnimeRow title="Top Rated All Time"     queryKey={['top', '', '', 1]}            queryFn={() => getTopAnime(1, '', '')}         linkTo="/featured" />
+        <AnimeRow title="Upcoming This Season"  queryKey={['upcoming', 1]}                queryFn={() => getUpcomingAnime(1)}                linkTo="/upcoming" />
+        <AnimeRow title="Currently Airing"       queryKey={['current', 1]}                queryFn={() => getCurrentSeason(1)}                linkTo="/upcoming" />
+        <AnimeRow title="Top Rated All Time"     queryKey={['top', '', '', 1]}             queryFn={() => getTopAnime(1, '', '')}             linkTo="/featured" />
         <AnimeRow title="Most Popular"           queryKey={['top', 'bypopularity', '', 1]} queryFn={() => getTopAnime(1, '', 'bypopularity')} linkTo="/featured" />
-        <AnimeRow title="Top Movies"             queryKey={['top', '', 'movie', 1]}       queryFn={() => getTopAnime(1, 'movie', '')}   linkTo="/featured" />
-        <AnimeRow title="Most Favorited"         queryKey={['top', 'favorite', '', 1]}    queryFn={() => getTopAnime(1, '', 'favorite')} linkTo="/featured" />
       </div>
     </div>
   )
