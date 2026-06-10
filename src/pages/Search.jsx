@@ -47,9 +47,10 @@ export function Search() {
   const [status,      setStatus]      = useState('')
   const [sort,        setSort]        = useState('popularity')
   const [genres,      setGenres]      = useState(() => urlGenre ? [urlGenre] : [])
-  const [tags,         setTags]         = useState([])
-  const [showMoreTags, setShowMoreTags] = useState(false)
-  const [filtersOpen,  setFiltersOpen]  = useState(true)
+  const [tags,           setTags]           = useState([])
+  const [showMoreTags,   setShowMoreTags]   = useState(false)
+  const [showMoreGenres, setShowMoreGenres] = useState(false)
+  const [filtersOpen,    setFiltersOpen]    = useState(true)
   const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
 
   usePageTitle(
@@ -172,10 +173,10 @@ export function Search() {
             <span className={filterLabel}>Genre</span>
             <div className="flex flex-wrap gap-2">
               {genresLoading
-                ? Array.from({ length: 18 }).map((_, i) => (
+                ? Array.from({ length: 8 }).map((_, i) => (
                     <div key={i} className="h-7 w-20 bg-zinc-900 border border-zinc-800 rounded-md animate-pulse" />
                   ))
-                : allGenres.map(g => {
+                : (showMoreGenres ? allGenres : allGenres.slice(0, 8)).map(g => {
                     const isActive = genres.includes(g.name)
                     return (
                       <button
@@ -188,6 +189,14 @@ export function Search() {
                     )
                   })
               }
+              {!genresLoading && (
+                <button
+                  onClick={() => setShowMoreGenres(v => !v)}
+                  className="px-3 py-1 rounded-md text-sm border border-dashed border-zinc-700 text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 transition-colors cursor-pointer"
+                >
+                  {showMoreGenres ? 'Show less ↑' : `+ ${allGenres.length - 8} more`}
+                </button>
+              )}
             </div>
           </div>
 
