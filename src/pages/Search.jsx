@@ -8,6 +8,12 @@ import { usePageTitle } from '../hooks/usePageTitle'
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
 import { dedupByMalId } from '../utils/anime'
 
+const POPULAR_TAGS = [
+  'Isekai', 'Harem', 'Shounen', 'Seinen', 'Shoujo',
+  'Martial Arts', 'School', 'Magic', 'Reincarnation',
+  'Time Travel', 'Demons', 'Vampires',
+]
+
 const TYPES    = ['All', 'TV', 'Movie', 'OVA', 'ONA', 'Special']
 const STATUSES = [
   { label: 'All',      value: '' },
@@ -36,6 +42,7 @@ export function Search() {
   const [status,      setStatus]      = useState('')
   const [sort,        setSort]        = useState('popularity')
   const [genres,      setGenres]      = useState(() => urlGenre ? [urlGenre] : [])
+  const [tags,        setTags]        = useState([])
   const [filtersOpen, setFiltersOpen] = useState(true)
   const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
 
@@ -50,7 +57,7 @@ export function Search() {
 
   if (prevUrlQuery !== urlQuery) {
     setPrevUrlQuery(urlQuery)
-    setType('All'); setStatus(''); setGenres([]); setSort('popularity')
+    setType('All'); setStatus(''); setGenres([]); setSort('popularity'); setTags([])
   }
 
   const { data: genresData, isLoading: genresLoading } = useQuery({
@@ -63,8 +70,8 @@ export function Search() {
   const typeParam = type === 'All' ? '' : type.toLowerCase()
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
-    queryKey: ['search-all', urlQuery, typeParam, status, genres, sort],
-    queryFn:  ({ pageParam = 1 }) => searchAllAnime(urlQuery, pageParam, typeParam, status, genres, sort),
+    queryKey: ['search-all', urlQuery, typeParam, status, genres, sort, tags],
+    queryFn:  ({ pageParam = 1 }) => searchAllAnime(urlQuery, pageParam, typeParam, status, genres, sort, tags),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const { has_next_page, current_page } = lastPage.pagination ?? {}
@@ -79,11 +86,15 @@ export function Search() {
     setGenres(prev => prev.includes(name) ? prev.filter(g => g !== name) : [...prev, name])
   }
 
-  function clearFilters() {
-    setType('All'); setStatus(''); setGenres([]); setSort('popularity')
+  function toggleTag(name) {
+    setTags(prev => prev.includes(name) ? prev.filter(t => t !== name) : [...prev, name])
   }
 
-  const hasActiveFilters = type !== 'All' || status !== '' || genres.length > 0 || sort !== 'popularity'
+  function clearFilters() {
+    setType('All'); setStatus(''); setGenres([]); setSort('popularity'); setTags([])
+  }
+
+  const hasActiveFilters = type !== 'All' || status !== '' || genres.length > 0 || sort !== 'popularity' || tags.length > 0
 
   return (
     <div className="px-4 py-8 max-w-7xl mx-auto page-fade">
@@ -100,7 +111,7 @@ export function Search() {
             }
           </h1>
           {!isLoading && items.length > 0 && (
-            <p className="text-zinc-600 text-sm mt-1">
+            <p className="text-zinc-400 text-sm mt-1 font-medium">
               {items.length}{hasNextPage ? '+' : ''} anime loaded
             </p>
           )}
@@ -121,9 +132,28 @@ export function Search() {
         </button>
       </div>
 
+      {/* Popular Tags row */}
+      <div className="mb-5">
+        <span className="text-zinc-500 text-xs uppercase tracking-wide block mb-2">Popular Tags</span>
+        <div className="flex flex-wrap gap-2">
+          {POPULAR_TAGS.map(tag => {
+            const isActive = tags.includes(tag)
+            return (
+              <button
+                key={tag}
+                onClick={() => toggleTag(tag)}
+                className={`${btnBase} ${isActive ? btnActive : btnInactive}`}
+              >
+                {tag}{isActive && ' ×'}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
       {/* Collapsible filters panel */}
       {filtersOpen && (
-        <div className="space-y-5 mb-6 pb-5 border-b border-zinc-900">
+        <div className="space-y-5 mb-6 pb-5 border-b border-zinc-800/20">
 
           {/* Genre */}
           <div>

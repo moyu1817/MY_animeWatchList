@@ -214,7 +214,7 @@ export async function searchAnime(q, page = 1) {
   return pageResult(d.Page)
 }
 
-export async function searchAllAnime(q, page = 1, format = '', status = '', genres = [], sort = 'popularity') {
+export async function searchAllAnime(q, page = 1, format = '', status = '', genres = [], sort = 'popularity', tags = []) {
   const statusMap = { airing: 'RELEASING', complete: 'FINISHED', upcoming: 'NOT_YET_RELEASED' }
   const sortMap   = { popularity: 'POPULARITY_DESC', score: 'SCORE_DESC', newest: 'START_DATE_DESC', title: 'TITLE_ROMAJI' }
 
@@ -227,10 +227,11 @@ export async function searchAllAnime(q, page = 1, format = '', status = '', genr
   const varDecls  = ['$page:Int']
   const mediaArgs = ['type:ANIME', `sort:[${sortVal}]`, 'isAdult:false']
 
-  if (search)          { varDecls.push('$q:String');           mediaArgs.push('search:$q');      vars.q      = search }
-  if (fmt)             { varDecls.push('$format:MediaFormat'); mediaArgs.push('format:$format'); vars.format = fmt }
-  if (stat)            { varDecls.push('$status:MediaStatus'); mediaArgs.push('status:$status'); vars.status = stat }
-  if (genres?.length)  { varDecls.push('$genres:[String]');    mediaArgs.push('genre_in:$genres'); vars.genres = genres }
+  if (search)         { varDecls.push('$q:String');        mediaArgs.push('search:$q');         vars.q      = search }
+  if (fmt)            { varDecls.push('$format:MediaFormat'); mediaArgs.push('format:$format'); vars.format = fmt }
+  if (stat)           { varDecls.push('$status:MediaStatus'); mediaArgs.push('status:$status'); vars.status = stat }
+  if (genres?.length) { varDecls.push('$genres:[String]'); mediaArgs.push('genre_in:$genres');  vars.genres = genres }
+  if (tags?.length)   { varDecls.push('$tags:[String]');   mediaArgs.push('tag_in:$tags');      vars.tags   = tags }
 
   const Q = `query(${varDecls.join(',')}){Page(page:$page,perPage:25){${PAGE_INFO} media(${mediaArgs.join(',')}){${MEDIA_FIELDS}}}}`
   const d = await query(Q, vars)
@@ -240,7 +241,7 @@ export async function searchAllAnime(q, page = 1, format = '', status = '', genr
 export async function getGenres() {
   // AniList genres are a fixed list — no API call needed
   const genres = [
-    'Action','Adventure','Comedy','Drama','Ecchi','Fantasy','Horror',
+    'Action','Adventure','Comedy','Drama','Fantasy','Horror',
     'Mahou Shoujo','Mecha','Music','Mystery','Psychological','Romance',
     'Sci-Fi','Slice of Life','Sports','Supernatural','Thriller',
   ]
