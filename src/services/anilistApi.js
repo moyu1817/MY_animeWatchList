@@ -125,22 +125,28 @@ export async function getCurrentSeason(page = 1) {
 
 export async function getTopAnime(page = 1, format = '', filter = '') {
   const sortMap = {
-    '':            'SCORE_DESC',
-    airing:        'POPULARITY_DESC',
-    bypopularity:  'POPULARITY_DESC',
-    favorite:      'FAVOURITES_DESC',
-    upcoming:      'POPULARITY_DESC',
+    '':           'SCORE_DESC',
+    airing:       'POPULARITY_DESC',
+    bypopularity: 'POPULARITY_DESC',
+    favorite:     'FAVOURITES_DESC',
+    upcoming:     'POPULARITY_DESC',
   }
-  const statusMap = {
-    airing:   'RELEASING',
-    upcoming: 'NOT_YET_RELEASED',
-  }
+  const statusMap = { airing: 'RELEASING', upcoming: 'NOT_YET_RELEASED' }
+
   const sort   = sortMap[filter] ?? 'SCORE_DESC'
   const status = statusMap[filter] ?? null
-  const fmt    = format ? format.toUpperCase().replace('MOVIE', 'MOVIE') : null
+  const fmt    = format ? format.toUpperCase() : null
 
-  const Q = `query($page:Int,$format:MediaFormat,$status:MediaStatus,$sort:[MediaSort]){Page(page:$page,perPage:25){${PAGE_INFO} media(type:ANIME,format:$format,status:$status,sort:[$sort],isAdult:false){${MEDIA_FIELDS}}}}`
-  const d = await query(Q, { page, format: fmt || undefined, status: status || undefined, sort })
+  // Build query dynamically so null filters are omitted entirely (not passed as null)
+  const vars        = { page, sort }
+  const varDecls    = ['$page:Int', '$sort:MediaSort']
+  const mediaArgs   = ['type:ANIME', 'sort:[$sort]', 'isAdult:false']
+
+  if (fmt)    { varDecls.push('$format:MediaFormat'); mediaArgs.push('format:$format'); vars.format = fmt }
+  if (status) { varDecls.push('$status:MediaStatus'); mediaArgs.push('status:$status'); vars.status = status }
+
+  const Q = `query(${varDecls.join(',')}){Page(page:$page,perPage:25){${PAGE_INFO} media(${mediaArgs.join(',')}){${MEDIA_FIELDS}}}}`
+  const d = await query(Q, vars)
   return pageResult(d.Page)
 }
 
@@ -208,16 +214,22 @@ export async function searchAnime(q, page = 1) {
 
 export async function searchAllAnime(q, page = 1, format = '', status = '', genre = null) {
   const statusMap = { airing: 'RELEASING', complete: 'FINISHED', upcoming: 'NOT_YET_RELEASED' }
-  const fmt = format ? format.toUpperCase() : null
 
-  const Q = `query($q:String,$page:Int,$format:MediaFormat,$status:MediaStatus,$genre:String){Page(page:$page,perPage:25){${PAGE_INFO} media(type:ANIME,search:$q,format:$format,status:$status,genre:$genre,sort:[POPULARITY_DESC],isAdult:false){${MEDIA_FIELDS}}}}`
-  const d = await query(Q, {
-    q:       q || undefined,
-    page,
-    format:  fmt    || undefined,
-    status:  statusMap[status] || undefined,
-    genre:   genre  || undefined,
-  })
+  const fmt    = format ? format.toUpperCase() : null
+  const stat   = statusMap[status] ?? null
+  const search = q || null
+
+  const vars      = { page }
+  const varDecls  = ['$page:Int']
+  const mediaArgs = ['type:ANIME', 'sort:[POPULARITY_DESC]', 'isAdult:false']
+
+  if (search) { varDecls.push('$q:String');            mediaArgs.push('search:$q');      vars.q      = search }
+  if (fmt)    { varDecls.push('$format:MediaFormat');  mediaArgs.push('format:$format'); vars.format = fmt }
+  if (stat)   { varDecls.push('$status:MediaStatus');  mediaArgs.push('status:$status'); vars.status = stat }
+  if (genre)  { varDecls.push('$genre:String');        mediaArgs.push('genre:$genre');   vars.genre  = genre }
+
+  const Q = `query(${varDecls.join(',')}){Page(page:$page,perPage:25){${PAGE_INFO} media(${mediaArgs.join(',')}){${MEDIA_FIELDS}}}}`
+  const d = await query(Q, vars)
   return pageResult(d.Page)
 }
 
