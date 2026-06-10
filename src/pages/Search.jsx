@@ -13,6 +13,11 @@ const POPULAR_TAGS = [
   'Martial Arts', 'School', 'Magic', 'Reincarnation',
   'Time Travel', 'Demons', 'Vampires',
 ]
+const EXTRA_TAGS = [
+  'Samurai', 'Ninja', 'Military', 'Historical', 'Post-Apocalyptic',
+  'Space', 'Idol', 'Virtual Reality', 'Reverse Harem', 'Moe',
+  'Gods', 'Dungeons', 'Assassins', 'Josei',
+]
 
 const TYPES    = ['All', 'TV', 'Movie', 'OVA', 'ONA', 'Special']
 const STATUSES = [
@@ -42,8 +47,9 @@ export function Search() {
   const [status,      setStatus]      = useState('')
   const [sort,        setSort]        = useState('popularity')
   const [genres,      setGenres]      = useState(() => urlGenre ? [urlGenre] : [])
-  const [tags,        setTags]        = useState([])
-  const [filtersOpen, setFiltersOpen] = useState(true)
+  const [tags,         setTags]         = useState([])
+  const [showMoreTags, setShowMoreTags] = useState(false)
+  const [filtersOpen,  setFiltersOpen]  = useState(true)
   const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
 
   usePageTitle(
@@ -136,7 +142,7 @@ export function Search() {
       <div className="mb-5">
         <span className="text-zinc-500 text-xs uppercase tracking-wide block mb-2">Popular Tags</span>
         <div className="flex flex-wrap gap-2">
-          {POPULAR_TAGS.map(tag => {
+          {(showMoreTags ? [...POPULAR_TAGS, ...EXTRA_TAGS] : POPULAR_TAGS).map(tag => {
             const isActive = tags.includes(tag)
             return (
               <button
@@ -148,6 +154,12 @@ export function Search() {
               </button>
             )
           })}
+          <button
+            onClick={() => setShowMoreTags(v => !v)}
+            className="px-3 py-1 rounded-md text-sm border border-dashed border-zinc-700 text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 transition-colors cursor-pointer"
+          >
+            {showMoreTags ? 'Show less ↑' : `+ ${EXTRA_TAGS.length} more`}
+          </button>
         </div>
       </div>
 
