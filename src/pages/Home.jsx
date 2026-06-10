@@ -153,12 +153,10 @@ export function Home() {
           <section className="mb-10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-semibold text-white">Continue Browsing</h2>
-              {recentlyViewed.length > 5 && (
-                <div className="flex gap-1">
-                  <button onClick={() => recentRef.current?.scrollBy({ left: -700, behavior: 'smooth' })} aria-label="Scroll left" className="w-7 h-7 flex items-center justify-center rounded border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer text-xs">‹</button>
-                  <button onClick={() => recentRef.current?.scrollBy({ left: 700, behavior: 'smooth' })}  aria-label="Scroll right" className="w-7 h-7 flex items-center justify-center rounded border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer text-xs">›</button>
-                </div>
-              )}
+              <div className="flex gap-1">
+                <button onClick={() => recentRef.current?.scrollBy({ left: -700, behavior: 'smooth' })} aria-label="Scroll left" className="w-7 h-7 flex items-center justify-center rounded border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer text-xs">‹</button>
+                <button onClick={() => recentRef.current?.scrollBy({ left: 700, behavior: 'smooth' })}  aria-label="Scroll right" className="w-7 h-7 flex items-center justify-center rounded border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer text-xs">›</button>
+              </div>
             </div>
             <div ref={recentRef} className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
               {recentlyViewed.slice(0, 10).map(anime => (
