@@ -71,18 +71,22 @@ export function Home() {
     queryFn: () => getUpcomingAnime(1),
   })
 
-  const featuredList = (upcomingData?.data ?? []).slice(0, 5)
+  const featuredList = useMemo(() => (upcomingData?.data ?? []).slice(0, 5), [upcomingData])
   const [heroIdx, setHeroIdx] = useState(0)
-  const [paused, setPaused] = useState(false)
+  const pausedRef = useRef(false)
+  const listLenRef = useRef(0)
+  listLenRef.current = featuredList.length
   const { recentlyViewed } = useRecentlyViewed()
   const recentRef = useRef(null)
   usePageTitle('Home')
 
   useEffect(() => {
-    if (featuredList.length <= 1 || paused) return
-    const id = setInterval(() => setHeroIdx(i => (i + 1) % featuredList.length), 6000)
+    const id = setInterval(() => {
+      if (!pausedRef.current && listLenRef.current > 1)
+        setHeroIdx(i => (i + 1) % listLenRef.current)
+    }, 6000)
     return () => clearInterval(id)
-  }, [featuredList.length, paused])
+  }, [])
 
   return (
     <div className="py-8 page-fade">
@@ -90,8 +94,8 @@ export function Home() {
       <div className="px-4 max-w-7xl mx-auto mb-10">
         <div
           className="relative rounded-xl overflow-hidden min-h-64 md:min-h-80 bg-zinc-950 border border-zinc-900"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
+          onMouseEnter={() => { pausedRef.current = true }}
+          onMouseLeave={() => { pausedRef.current = false }}
         >
           {featuredList.length > 0 ? featuredList.map((item, i) => {
             const itemTitle = item.title_english ?? item.title
@@ -174,7 +178,7 @@ export function Home() {
               {featuredList.map((_, i) => (
                 <button
                   key={i}
-                  onClick={() => { setHeroIdx(i); setPaused(false) }}
+                  onClick={() => setHeroIdx(i)}
                   aria-label={`Go to slide ${i + 1}`}
                   className={`rounded-full transition-all duration-300 cursor-pointer ${
                     i === heroIdx
@@ -211,7 +215,7 @@ export function Home() {
         <AnimeRow title="Upcoming This Season"  queryKey={['upcoming', 1]}                queryFn={() => getUpcomingAnime(1)}                linkTo="/upcoming" />
         <AnimeRow title="Currently Airing"       queryKey={['current', 1]}                queryFn={() => getCurrentSeason(1)}                linkTo="/seasons" />
         <AnimeRow title="Top Rated All Time"     queryKey={['top', '', '', 1]}             queryFn={() => getTopAnime(1, '', '')}             linkTo="/featured" />
-        <AnimeRow title="Most Popular"           queryKey={['top', 'bypopularity', '', 1]} queryFn={() => getTopAnime(1, '', 'bypopularity')} linkTo="/featured" />
+        <AnimeRow title="Most Popular"           queryKey={['top', 'bypopularity', '', 1]} queryFn={() => getTopAnime(1, '', 'bypopularity')} linkTo="/featured?tab=bypopularity" />
       </div>
     </div>
   )

@@ -26,7 +26,7 @@ export function AnimeCard({ anime, showAiringBadge = true }) {
           onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = IMG_FALLBACK }}
         />
       </Link>
-      <div className="p-3 h-32 grid grid-rows-[auto_1fr_auto] overflow-hidden">
+      <div className="p-3 min-h-[8rem] grid grid-rows-[auto_1fr_auto]">
         <Link
           to={`/anime/${anime.mal_id}`}
           className="font-medium text-sm text-white hover:text-emerald-400 line-clamp-2 transition-colors"

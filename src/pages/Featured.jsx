@@ -1,4 +1,5 @@
 ﻿import { useState, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
@@ -22,7 +23,12 @@ const btnActive = 'bg-emerald-500 text-black font-semibold'
 const btnInactive = 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600'
 
 export function Featured() {
-  const [activeTab, setActiveTab] = useState(0)
+  const [searchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState(() => {
+    const tabFilter = searchParams.get('tab') ?? ''
+    const idx = TABS.findIndex(t => t.filter === tabFilter)
+    return idx >= 0 ? idx : 0
+  })
   const [type, setType] = useState('All')
 
   usePageTitle('Featured')
