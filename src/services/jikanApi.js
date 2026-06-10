@@ -2,6 +2,14 @@ import axios from 'axios'
 
 const api = axios.create({ baseURL: 'https://api.jikan.moe/v4' })
 
+api.interceptors.response.use(
+  res => res,
+  err => {
+    if (err.response?.status === 429) window.dispatchEvent(new CustomEvent('api:rate-limited'))
+    return Promise.reject(err)
+  }
+)
+
 export async function getUpcomingAnime(page = 1) {
   const { data } = await api.get('/seasons/upcoming', { params: { page } })
   return data

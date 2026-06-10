@@ -42,11 +42,12 @@ function sortGroup(group, sortBy) {
 
 export function Watchlist() {
   usePageTitle('My Watchlist')
-  const { watchlist, removeAnime, updateStatus, updateRating } = useWatchlist()
+  const { watchlist, removeAnime, updateStatus, updateRating, importWatchlist } = useWatchlist()
   const [sortBy, setSortBy] = useState('date')
   const [search, setSearch] = useState('')
   const [confirmId, setConfirmId] = useState(null)
   const confirmTimer = useRef(null)
+  const importRef = useRef(null)
 
   useEffect(() => () => clearTimeout(confirmTimer.current), [])
 
@@ -59,6 +60,24 @@ export function Watchlist() {
       setConfirmId(mal_id)
       confirmTimer.current = setTimeout(() => setConfirmId(id => id === mal_id ? null : id), 3000)
     }
+  }
+
+  function handleImport(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result)
+        if (!Array.isArray(data)) throw new Error('Invalid format')
+        importWatchlist(data)
+      } catch {
+        alert('Invalid watchlist file. Make sure it is a JSON exported from MoMoAnime.')
+      } finally {
+        e.target.value = ''
+      }
+    }
+    reader.readAsText(file)
   }
 
   function handleExport() {
@@ -106,6 +125,10 @@ export function Watchlist() {
           <button onClick={handleExport} className="border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 text-xs px-2.5 py-1.5 rounded-md transition-colors cursor-pointer shrink-0">
             Export
           </button>
+          <button onClick={() => importRef.current?.click()} className="border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 text-xs px-2.5 py-1.5 rounded-md transition-colors cursor-pointer shrink-0">
+            Import
+          </button>
+          <input ref={importRef} type="file" accept=".json,application/json" className="hidden" onChange={handleImport} />
         </div>
       </div>
 

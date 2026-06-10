@@ -8,6 +8,7 @@ import { ScrollToTop } from './components/ScrollToTop'
 import { LoadingBar } from './components/LoadingBar'
 import { BackToTop } from './components/BackToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { RateLimitBanner } from './components/RateLimitBanner'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 
 const Home        = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
@@ -73,6 +74,7 @@ export default function App() {
               <p className="mt-1">Anime data provided by <a href="https://jikan.moe" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-emerald-400 transition-colors">Jikan API</a> (unofficial MyAnimeList API). Not affiliated with MyAnimeList.</p>
             </footer>
             <BackToTop />
+            <RateLimitBanner />
           </div>
         </RecentlyViewedProvider>
       </WatchlistProvider>

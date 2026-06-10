@@ -40,8 +40,16 @@ export function WatchlistProvider({ children }) {
     return watchlist.some(a => a.mal_id === mal_id)
   }
 
+  function importWatchlist(entries) {
+    setWatchlist(prev => {
+      const existingIds = new Set(prev.map(a => a.mal_id))
+      const fresh = entries.filter(a => a?.mal_id != null && !existingIds.has(a.mal_id))
+      return [...prev, ...fresh]
+    })
+  }
+
   return (
-    <WatchlistContext.Provider value={{ watchlist, addAnime, removeAnime, updateStatus, updateRating, isInWatchlist }}>
+    <WatchlistContext.Provider value={{ watchlist, addAnime, removeAnime, updateStatus, updateRating, isInWatchlist, importWatchlist }}>
       {children}
     </WatchlistContext.Provider>
   )
