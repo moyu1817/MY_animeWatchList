@@ -4,12 +4,19 @@ import { useWatchlist } from '../hooks/useWatchlist'
 import { StatusBadge } from '../components/StatusBadge'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { STATUSES, STATUS_LABELS } from '../utils/watchlistStatus'
-const STAT_COLORS = { plan_to_watch: 'text-emerald-400', watching: 'text-emerald-300', completed: 'text-emerald-500', dropped: 'text-zinc-600' }
+import { IMG_FALLBACK } from '../utils/images'
+
+const STAT_COLORS = {
+  plan_to_watch: 'text-blue-400',
+  watching:      'text-green-400',
+  completed:     'text-purple-400',
+  dropped:       'text-red-400',
+}
 
 const SORT_OPTIONS = [
   { value: 'date', label: 'Date Added' },
   { value: 'title', label: 'Title A–Z' },
-  { value: 'score', label: 'MAL Score' },
+  { value: 'score', label: 'Score' },
   { value: 'rating', label: 'My Rating' },
 ]
 
@@ -168,7 +175,7 @@ export function Watchlist() {
               {group.map(anime => (
                 <div key={anime.mal_id} className="flex items-center gap-3 bg-zinc-900 rounded-md p-3 border border-zinc-800 hover:border-zinc-700 transition-colors">
                   <Link to={`/anime/${anime.mal_id}`} className="shrink-0">
-                    <img src={anime.image_url} alt={anime.title} className="w-10 h-14 object-cover rounded bg-zinc-800" referrerPolicy="no-referrer" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 7'%3E%3Crect width='5' height='7' fill='%2318181b'/%3E%3C/svg%3E" }} />
+                    <img src={anime.image_url} alt={anime.title} className="w-10 h-14 object-cover rounded bg-zinc-800" referrerPolicy="no-referrer" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = IMG_FALLBACK }} />
                   </Link>
                   <div className="flex-1 min-w-0">
                     <Link to={`/anime/${anime.mal_id}`} className="font-medium text-white hover:text-emerald-400 text-sm block truncate transition-colors">

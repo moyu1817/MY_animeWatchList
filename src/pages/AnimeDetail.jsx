@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getAnimeById, getAnimeCharacters, getAnimeRecommendations, getAnimeRelated } from '../services/anilistApi'
+import { IMG_FALLBACK } from '../utils/images'
+import { SAFE_EMBED } from '../utils/embed'
 import { WatchlistButton } from '../components/WatchlistButton'
 import { AnimeCard } from '../components/AnimeCard'
 import { TrailerModal } from '../components/TrailerModal'
@@ -10,7 +12,6 @@ import { usePageTitle } from '../hooks/usePageTitle'
 
 const TABS = ['Overview', 'Characters', 'Recommendations', 'Related']
 
-const SAFE_EMBED = /^https:\/\/(www\.)?youtube(-nocookie)?\.com\/embed\//
 
 function TrailerEmbed({ embedUrl, title }) {
   const [playing, setPlaying] = useState(false)
@@ -206,7 +207,7 @@ export function AnimeDetail() {
               alt={title}
               className="w-44 rounded-md border border-zinc-800 shadow-2xl shadow-black bg-zinc-900"
               referrerPolicy="no-referrer"
-              onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='3' height='4' fill='%2318181b'/%3E%3C/svg%3E" }}
+              onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = IMG_FALLBACK }}
             />
             <div className="mt-3 w-44 space-y-2">
               <WatchlistButton anime={{ mal_id: anime.mal_id, title, image_url: image, score: anime.score ?? null, episodes: anime.episodes ?? null }} />
@@ -312,7 +313,7 @@ export function AnimeDetail() {
                   const jpVA = voice_actors?.find(v => v.language === 'Japanese')
                   return (
                     <div key={character.mal_id} className="bg-zinc-900 border border-zinc-800 rounded-md overflow-hidden flex gap-3 p-3 items-start">
-                      <img src={character.images?.jpg?.image_url} alt={character.name} className="w-12 h-16 object-cover rounded shrink-0 bg-zinc-800" loading="lazy" referrerPolicy="no-referrer" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='3' height='4' fill='%2318181b'/%3E%3C/svg%3E" }} />
+                      <img src={character.images?.jpg?.image_url} alt={character.name} className="w-12 h-16 object-cover rounded shrink-0 bg-zinc-800" loading="lazy" referrerPolicy="no-referrer" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = IMG_FALLBACK }} />
                       <div className="min-w-0">
                         <p className="text-white text-xs font-medium truncate">{character.name}</p>
                         <p className="text-zinc-600 text-xs mt-0.5">{role}</p>

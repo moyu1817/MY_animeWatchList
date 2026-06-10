@@ -56,8 +56,8 @@ export default function App() {
   return (
     <ThemeProvider>
       <ToastProvider>
-      <WatchlistProvider>
-        <RecentlyViewedProvider>
+        <WatchlistProvider>
+          <RecentlyViewedProvider>
           <div className="min-h-screen bg-black text-white">
             <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-emerald-500 focus:text-black focus:rounded-md focus:text-sm focus:font-semibold">
               Skip to content
@@ -90,8 +90,8 @@ export default function App() {
             <RateLimitBanner />
             <Toast />
           </div>
-        </RecentlyViewedProvider>
-      </WatchlistProvider>
+          </RecentlyViewedProvider>
+        </WatchlistProvider>
       </ToastProvider>
     </ThemeProvider>
   )

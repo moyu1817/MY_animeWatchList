@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
-
-const SAFE_EMBED = /^https:\/\/(www\.)?youtube(-nocookie)?\.com\/embed\//
+import { SAFE_EMBED } from '../utils/embed'
 
 export function TrailerModal({ embedUrl, title, onClose }) {
   const isValid = SAFE_EMBED.test(embedUrl)
