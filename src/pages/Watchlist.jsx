@@ -7,10 +7,10 @@ import { STATUSES, STATUS_LABELS } from '../utils/watchlistStatus'
 import { IMG_FALLBACK } from '../utils/images'
 
 const STAT_COLORS = {
-  plan_to_watch: 'text-blue-400',
-  watching:      'text-green-400',
-  completed:     'text-purple-400',
-  dropped:       'text-red-400',
+  plan_to_watch: 'text-sky-400',
+  watching:      'text-emerald-400',
+  completed:     'text-violet-400',
+  dropped:       'text-rose-400',
 }
 
 const SORT_OPTIONS = [

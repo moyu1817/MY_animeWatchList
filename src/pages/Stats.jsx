@@ -5,10 +5,10 @@ import { STATUSES, STATUS_LABELS } from '../utils/watchlistStatus'
 import { IMG_FALLBACK } from '../utils/images'
 
 const STATUS_COLORS = {
-  plan_to_watch: 'bg-blue-500',
-  watching:      'bg-green-500',
-  completed:     'bg-purple-500',
-  dropped:       'bg-red-500',
+  plan_to_watch: 'bg-sky-500',
+  watching:      'bg-emerald-500',
+  completed:     'bg-violet-500',
+  dropped:       'bg-rose-500',
 }
 
 function StatCard({ label, value, sub }) {
