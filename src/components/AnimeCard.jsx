@@ -33,11 +33,11 @@ export function AnimeCard({ anime, showAiringBadge = true }) {
         >
           {title}
         </Link>
-        <div className="self-end pb-1.5 text-xs text-zinc-500 flex gap-2 flex-wrap">
-          {anime.type && <span>{anime.type}</span>}
-          {!!anime.episodes && <span>{anime.episodes} eps</span>}
-          {year && <span>{year}</span>}
-          {anime.score && <span className="text-emerald-400">★ {anime.score}</span>}
+        <div className="self-end pb-1.5 text-xs flex items-center justify-between gap-1 min-w-0">
+          <span className="text-zinc-500 truncate min-w-0">
+            {[anime.type, anime.episodes ? `${anime.episodes} eps` : null, year].filter(Boolean).join(' · ')}
+          </span>
+          {anime.score && <span className="text-emerald-400 shrink-0">★ {anime.score}</span>}
         </div>
         <WatchlistButton anime={{
           mal_id: anime.mal_id,
