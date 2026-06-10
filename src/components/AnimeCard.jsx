@@ -22,6 +22,7 @@ export function AnimeCard({ anime, showAiringBadge = true }) {
           className="w-full aspect-[3/4] object-cover"
           loading="eager"
           referrerPolicy="no-referrer"
+          data-pin-nopin="true"
           onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = IMG_FALLBACK }}
         />
       </Link>

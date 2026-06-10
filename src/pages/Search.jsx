@@ -67,8 +67,7 @@ export function Search() {
   })
 
   const items = dedupByMalId(data?.data ?? [])
-  const total = data?.pagination?.items?.total ?? 0
-  const lastPage = data?.pagination?.last_visible_page ?? 1
+  const hasNextPage = data?.pagination?.has_next_page ?? false
 
 
 
@@ -122,8 +121,8 @@ export function Search() {
             : <>Browsing <span className="text-emerald-400">{genre?.name}</span></>
           }
         </h1>
-        {!isLoading && total > 0 && (
-          <p className="text-zinc-600 text-sm mt-1">{total.toLocaleString()} anime found</p>
+        {!isLoading && items.length > 0 && (
+          <p className="text-zinc-600 text-sm mt-1">{items.length} results on this page</p>
         )}
       </div>
 
@@ -197,8 +196,8 @@ export function Search() {
       {!isLoading && items.length > 0 && (
         <div className="flex justify-center items-center gap-3">
           <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className={paginationBtn}>← Prev</button>
-          <span className="text-zinc-500 text-sm">Page {page} of {lastPage}</span>
-          <button onClick={() => setPage(p => Math.min(lastPage, p + 1))} disabled={page === lastPage} className={paginationBtn}>Next →</button>
+          <span className="text-zinc-500 text-sm">Page {page}</span>
+          <button onClick={() => setPage(p => p + 1)} disabled={!hasNextPage} className={paginationBtn}>Next →</button>
         </div>
       )}
     </div>
