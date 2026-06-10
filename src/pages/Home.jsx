@@ -6,11 +6,11 @@ import { SkeletonCard } from '../components/SkeletonCard'
 import { getUpcomingAnime, getCurrentSeason, getTopAnime } from '../services/jikanApi'
 import { useRecentlyViewed } from '../context/RecentlyViewedContext'
 import { usePageTitle } from '../hooks/usePageTitle'
+import { dedupByMalId } from '../utils/anime'
 
 function AnimeRow({ title, queryKey, queryFn, linkTo }) {
   const { data, isLoading, isError, refetch, isFetching } = useQuery({ queryKey, queryFn })
-  const seen = new Set()
-  const items = (data?.data ?? []).filter(a => seen.has(a.mal_id) ? false : seen.add(a.mal_id)).slice(0, 15)
+  const items = dedupByMalId(data?.data ?? []).slice(0, 15)
   const rowRef = useRef(null)
 
   function scroll(dir) {

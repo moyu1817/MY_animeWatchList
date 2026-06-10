@@ -4,6 +4,7 @@ import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
 import { getSchedule } from '../services/jikanApi'
 import { usePageTitle } from '../hooks/usePageTitle'
+import { dedupByMalId } from '../utils/anime'
 
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 
@@ -24,8 +25,7 @@ export function Schedule() {
     staleTime: 1000 * 60 * 30,
   })
 
-  const seen = new Set()
-  const items = (data?.data ?? []).filter(a => seen.has(a.mal_id) ? false : seen.add(a.mal_id))
+  const items = dedupByMalId(data?.data ?? [])
 
   return (
     <div className="px-4 py-8 max-w-7xl mx-auto page-fade">

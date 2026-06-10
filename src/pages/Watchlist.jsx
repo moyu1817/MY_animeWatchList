@@ -3,9 +3,7 @@ import { Link } from 'react-router-dom'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { StatusBadge } from '../components/StatusBadge'
 import { usePageTitle } from '../hooks/usePageTitle'
-
-const STATUSES = ['plan_to_watch', 'watching', 'completed', 'dropped']
-const STATUS_LABELS = { plan_to_watch: 'Plan to Watch', watching: 'Watching', completed: 'Completed', dropped: 'Dropped' }
+import { STATUSES, STATUS_LABELS } from '../utils/watchlistStatus'
 const STAT_COLORS = { plan_to_watch: 'text-emerald-400', watching: 'text-emerald-300', completed: 'text-emerald-500', dropped: 'text-zinc-600' }
 
 const SORT_OPTIONS = [

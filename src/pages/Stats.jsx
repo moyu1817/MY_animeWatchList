@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { usePageTitle } from '../hooks/usePageTitle'
-
-const STATUS_LABELS = { plan_to_watch: 'Plan to Watch', watching: 'Watching', completed: 'Completed', dropped: 'Dropped' }
+import { STATUS_LABELS } from '../utils/watchlistStatus'
 const STATUS_COLORS = { plan_to_watch: 'bg-emerald-500', watching: 'bg-emerald-400', completed: 'bg-emerald-300', dropped: 'bg-zinc-600' }
 
 function StatCard({ label, value, sub }) {

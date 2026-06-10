@@ -71,11 +71,7 @@ export default function App() {
             </main>
             <footer className="border-t border-zinc-900 mt-16 py-6 px-4 text-center text-zinc-700 text-xs">
               <p>© {new Date().getFullYear()} MoMoAnime. All rights reserved.</p>
-              <p className="mt-1">
-                Anime data provided by{' '}
-                <a href="https://jikan.moe" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-emerald-400 transition-colors">Jikan API</a>
-                {' '}(unofficial MyAnimeList API). Not affiliated with MyAnimeList.
-              </p>
+              <p className="mt-1">Anime data provided by <a href="https://jikan.moe" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-emerald-400 transition-colors">Jikan API</a> (unofficial MyAnimeList API). Not affiliated with MyAnimeList.</p>
             </footer>
             <BackToTop />
           </div>

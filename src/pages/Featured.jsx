@@ -1,10 +1,11 @@
-﻿import { useState } from 'react'
+﻿import { useState, useMemo } from 'react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
 import { SkeletonCard } from '../components/SkeletonCard'
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
 import { getTopAnime } from '../services/jikanApi'
 import { usePageTitle } from '../hooks/usePageTitle'
+import { dedupByMalId } from '../utils/anime'
 
 const TABS = [
   { label: 'Top Rated', filter: '' },
@@ -38,8 +39,7 @@ export function Featured() {
     },
   })
 
-  const seen = new Set()
-  const items = (data?.pages.flatMap(p => p.data) ?? []).filter(a => seen.has(a.mal_id) ? false : seen.add(a.mal_id))
+  const items = useMemo(() => dedupByMalId(data?.pages.flatMap(p => p.data) ?? []), [data])
   const sentinelRef = useInfiniteScroll(fetchNextPage, hasNextPage && !isFetchingNextPage)
 
   return (

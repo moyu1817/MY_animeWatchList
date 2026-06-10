@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
@@ -7,6 +7,7 @@ import { useDebounce } from '../hooks/useDebounce'
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
 import { getUpcomingAnime, searchAnime, searchAllAnime } from '../services/jikanApi'
 import { usePageTitle } from '../hooks/usePageTitle'
+import { dedupByMalId } from '../utils/anime'
 
 const TYPES = ['All', 'TV', 'Movie', 'OVA', 'ONA', 'Special']
 
@@ -49,8 +50,7 @@ export function Upcoming() {
     },
   })
 
-  const seen = new Set()
-  const allItems = (data?.pages.flatMap(p => p.data) ?? []).filter(a => seen.has(a.mal_id) ? false : seen.add(a.mal_id))
+  const allItems = useMemo(() => dedupByMalId(data?.pages.flatMap(p => p.data) ?? []), [data])
   const items = allItems.filter(a => type === 'All' || a.type === type)
   const sentinelRef = useInfiniteScroll(fetchNextPage, hasNextPage && !isFetchingNextPage)
 
