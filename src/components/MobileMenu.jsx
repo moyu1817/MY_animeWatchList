@@ -7,7 +7,6 @@ const LINKS = [
   { to: '/', label: 'Home', end: true },
   { to: '/featured', label: 'Featured' },
   { to: '/search', label: 'Categories' },
-  { to: '/upcoming', label: 'Upcoming' },
   { to: '/seasons', label: 'Seasons' },
   { to: '/schedule', label: 'Schedule' },
   { to: '/watchlist', label: 'Watchlist' },

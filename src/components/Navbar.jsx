@@ -65,7 +65,6 @@ export function Navbar() {
           <NavLink to="/" end className={linkClass}>Home</NavLink>
           <NavLink to="/featured" className={linkClass}>Featured</NavLink>
           <NavLink to="/search" className={linkClass}>Categories</NavLink>
-          <NavLink to="/upcoming" className={linkClass}>Upcoming</NavLink>
           <NavLink to="/seasons" className={linkClass}>Seasons</NavLink>
           <NavLink to="/schedule" className={linkClass}>Schedule</NavLink>
           <NavLink to="/watchlist" className={linkClass}>
