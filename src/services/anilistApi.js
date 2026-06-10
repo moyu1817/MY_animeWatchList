@@ -214,16 +214,18 @@ export async function searchAnime(q, page = 1) {
   return pageResult(d.Page)
 }
 
-export async function searchAllAnime(q, page = 1, format = '', status = '', genres = []) {
+export async function searchAllAnime(q, page = 1, format = '', status = '', genres = [], sort = 'popularity') {
   const statusMap = { airing: 'RELEASING', complete: 'FINISHED', upcoming: 'NOT_YET_RELEASED' }
+  const sortMap   = { popularity: 'POPULARITY_DESC', score: 'SCORE_DESC', newest: 'START_DATE_DESC', title: 'TITLE_ROMAJI' }
 
-  const fmt    = format ? format.toUpperCase() : null
-  const stat   = statusMap[status] ?? null
-  const search = q || null
+  const fmt     = format ? format.toUpperCase() : null
+  const stat    = statusMap[status] ?? null
+  const search  = q || null
+  const sortVal = sortMap[sort] ?? 'POPULARITY_DESC'
 
   const vars      = { page }
   const varDecls  = ['$page:Int']
-  const mediaArgs = ['type:ANIME', 'sort:[POPULARITY_DESC]', 'isAdult:false']
+  const mediaArgs = ['type:ANIME', `sort:[${sortVal}]`, 'isAdult:false']
 
   if (search)          { varDecls.push('$q:String');           mediaArgs.push('search:$q');      vars.q      = search }
   if (fmt)             { varDecls.push('$format:MediaFormat'); mediaArgs.push('format:$format'); vars.format = fmt }

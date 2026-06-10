@@ -15,19 +15,28 @@ const STATUSES = [
   { label: 'Complete', value: 'complete' },
   { label: 'Upcoming', value: 'upcoming' },
 ]
+const SORTS = [
+  { label: 'Popularity', value: 'popularity' },
+  { label: 'Score',      value: 'score' },
+  { label: 'Newest',     value: 'newest' },
+  { label: 'A–Z',        value: 'title' },
+]
 
 const btnBase     = 'px-3 py-1 rounded-md text-sm transition-colors cursor-pointer'
 const btnActive   = 'bg-emerald-500 text-black font-semibold'
 const btnInactive = 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600'
+const filterLabel = 'text-zinc-500 text-xs uppercase tracking-wide block mb-2'
 
 export function Search() {
   const [searchParams] = useSearchParams()
   const urlQuery = searchParams.get('q') ?? ''
   const urlGenre = searchParams.get('genre')
 
-  const [type,   setType]   = useState('All')
-  const [status, setStatus] = useState('')
-  const [genres, setGenres] = useState(() => urlGenre ? [urlGenre] : [])
+  const [type,        setType]        = useState('All')
+  const [status,      setStatus]      = useState('')
+  const [sort,        setSort]        = useState('popularity')
+  const [genres,      setGenres]      = useState(() => urlGenre ? [urlGenre] : [])
+  const [filtersOpen, setFiltersOpen] = useState(true)
   const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
 
   usePageTitle(
@@ -41,7 +50,7 @@ export function Search() {
 
   if (prevUrlQuery !== urlQuery) {
     setPrevUrlQuery(urlQuery)
-    setType('All'); setStatus(''); setGenres([])
+    setType('All'); setStatus(''); setGenres([]); setSort('popularity')
   }
 
   const { data: genresData, isLoading: genresLoading } = useQuery({
@@ -54,8 +63,8 @@ export function Search() {
   const typeParam = type === 'All' ? '' : type.toLowerCase()
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
-    queryKey: ['search-all', urlQuery, typeParam, status, genres],
-    queryFn:  ({ pageParam = 1 }) => searchAllAnime(urlQuery, pageParam, typeParam, status, genres),
+    queryKey: ['search-all', urlQuery, typeParam, status, genres, sort],
+    queryFn:  ({ pageParam = 1 }) => searchAllAnime(urlQuery, pageParam, typeParam, status, genres, sort),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const { has_next_page, current_page } = lastPage.pagination ?? {}
@@ -70,74 +79,114 @@ export function Search() {
     setGenres(prev => prev.includes(name) ? prev.filter(g => g !== name) : [...prev, name])
   }
 
-  const hasActiveFilters = type !== 'All' || status !== '' || genres.length > 0
+  function clearFilters() {
+    setType('All'); setStatus(''); setGenres([]); setSort('popularity')
+  }
+
+  const hasActiveFilters = type !== 'All' || status !== '' || genres.length > 0 || sort !== 'popularity'
 
   return (
     <div className="px-4 py-8 max-w-7xl mx-auto page-fade">
 
-      {/* Heading */}
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-white">
-          {urlQuery
-            ? <>Results for <span className="text-emerald-400">"{urlQuery}"</span></>
-            : genres.length > 0
-            ? <>Browsing <span className="text-emerald-400">{genres.join(' · ')}</span></>
-            : 'Browse Anime'
-          }
-        </h1>
-      </div>
-
-      {/* Filters */}
-      <div className="space-y-4 mb-6">
-
-        {/* Genre chips */}
+      {/* Heading row */}
+      <div className="flex items-start justify-between gap-4 mb-6">
         <div>
-          <span className="text-zinc-600 text-xs uppercase tracking-wide block mb-2">Genre</span>
-          <div className="flex flex-wrap gap-2">
-            {genresLoading
-              ? Array.from({ length: 18 }).map((_, i) => (
-                  <div key={i} className="h-7 w-20 bg-zinc-900 border border-zinc-800 rounded-md animate-pulse" />
-                ))
-              : allGenres.map(g => {
-                  const isActive = genres.includes(g.name)
-                  return (
-                    <button
-                      key={g.mal_id}
-                      onClick={() => toggleGenre(g.name)}
-                      className={`${btnBase} ${isActive ? btnActive : btnInactive}`}
-                    >
-                      {g.name}{isActive && ' ×'}
-                    </button>
-                  )
-                })
+          <h1 className="text-xl font-bold text-white">
+            {urlQuery
+              ? <>Results for <span className="text-emerald-400">"{urlQuery}"</span></>
+              : genres.length > 0
+              ? <>Browsing <span className="text-emerald-400">{genres.join(' · ')}</span></>
+              : 'Browse Anime'
             }
-          </div>
+          </h1>
+          {!isLoading && items.length > 0 && (
+            <p className="text-zinc-600 text-sm mt-1">
+              {items.length}{hasNextPage ? '+' : ''} anime loaded
+            </p>
+          )}
         </div>
 
-        {/* Type + Status + Clear */}
-        <div className="flex flex-wrap gap-4">
-          <div className="flex gap-2 flex-wrap items-center">
-            <span className="text-zinc-600 text-xs uppercase tracking-wide">Type</span>
-            {TYPES.map(t => (
-              <button key={t} onClick={() => setType(t)} className={`${btnBase} ${type === t ? btnActive : btnInactive}`}>{t}</button>
-            ))}
+        <button
+          onClick={() => setFiltersOpen(f => !f)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer shrink-0"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+          </svg>
+          Filters
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+            className={`transition-transform duration-200 ${filtersOpen ? 'rotate-180' : ''}`}>
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+      </div>
+
+      {/* Collapsible filters panel */}
+      {filtersOpen && (
+        <div className="space-y-5 mb-6 pb-5 border-b border-zinc-900">
+
+          {/* Genre */}
+          <div>
+            <span className={filterLabel}>Genre</span>
+            <div className="flex flex-wrap gap-2">
+              {genresLoading
+                ? Array.from({ length: 18 }).map((_, i) => (
+                    <div key={i} className="h-7 w-20 bg-zinc-900 border border-zinc-800 rounded-md animate-pulse" />
+                  ))
+                : allGenres.map(g => {
+                    const isActive = genres.includes(g.name)
+                    return (
+                      <button
+                        key={g.mal_id}
+                        onClick={() => toggleGenre(g.name)}
+                        className={`${btnBase} ${isActive ? btnActive : btnInactive}`}
+                      >
+                        {g.name}{isActive && ' ×'}
+                      </button>
+                    )
+                  })
+              }
+            </div>
           </div>
-          <div className="flex gap-2 flex-wrap items-center">
-            <span className="text-zinc-600 text-xs uppercase tracking-wide">Status</span>
-            {STATUSES.map(s => (
-              <button key={s.value} onClick={() => setStatus(s.value)} className={`${btnBase} ${status === s.value ? btnActive : btnInactive}`}>{s.label}</button>
-            ))}
+
+          {/* Type · Status · Sort — each with own label */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <div>
+              <span className={filterLabel}>Type</span>
+              <div className="flex flex-wrap gap-2">
+                {TYPES.map(t => (
+                  <button key={t} onClick={() => setType(t)} className={`${btnBase} ${type === t ? btnActive : btnInactive}`}>{t}</button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <span className={filterLabel}>Status</span>
+              <div className="flex flex-wrap gap-2">
+                {STATUSES.map(s => (
+                  <button key={s.value} onClick={() => setStatus(s.value)} className={`${btnBase} ${status === s.value ? btnActive : btnInactive}`}>{s.label}</button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <span className={filterLabel}>Sort by</span>
+              <div className="flex flex-wrap gap-2">
+                {SORTS.map(s => (
+                  <button key={s.value} onClick={() => setSort(s.value)} className={`${btnBase} ${sort === s.value ? btnActive : btnInactive}`}>{s.label}</button>
+                ))}
+              </div>
+            </div>
           </div>
+
           {hasActiveFilters && (
             <button
-              onClick={() => { setType('All'); setStatus(''); setGenres([]) }}
-              className="px-3 py-1 rounded-md text-sm text-zinc-500 hover:text-white border border-zinc-800 hover:border-zinc-600 bg-zinc-900 transition-colors cursor-pointer self-center"
+              onClick={clearFilters}
+              className="px-3 py-1 rounded-md text-sm text-zinc-500 hover:text-white border border-zinc-800 hover:border-zinc-600 bg-zinc-900 transition-colors cursor-pointer"
             >
-              Clear filters ×
+              Clear all filters ×
             </button>
           )}
         </div>
-      </div>
+      )}
 
       {/* Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-4">
