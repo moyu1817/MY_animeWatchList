@@ -43,15 +43,15 @@ export function Search() {
   const urlQuery = searchParams.get('q') ?? ''
   const urlGenre = searchParams.get('genre')
 
-  const [type,           setType]           = useState('All')
-  const [status,         setStatus]         = useState('')
-  const [sort,           setSort]           = useState('popularity')
-  const [genres,         setGenres]         = useState(() => urlGenre ? [urlGenre] : [])
+  const [type,        setType]        = useState('All')
+  const [status,      setStatus]      = useState('')
+  const [sort,        setSort]        = useState('popularity')
+  const [genres,      setGenres]      = useState(() => urlGenre ? [urlGenre] : [])
   const [tags,           setTags]           = useState([])
   const [showMoreTags,   setShowMoreTags]   = useState(false)
   const [showMoreGenres, setShowMoreGenres] = useState(false)
   const [filtersOpen,    setFiltersOpen]    = useState(true)
-  const [prevUrlQuery,   setPrevUrlQuery]   = useState(urlQuery)
+  const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
 
   usePageTitle(
     urlQuery      ? `Search: ${urlQuery}` :
@@ -65,7 +65,6 @@ export function Search() {
   if (prevUrlQuery !== urlQuery) {
     setPrevUrlQuery(urlQuery)
     setType('All'); setStatus(''); setGenres([]); setSort('popularity'); setTags([])
-    setShowMoreTags(false); setShowMoreGenres(false)
   }
 
   const { data: genresData, isLoading: genresLoading } = useQuery({
@@ -113,8 +112,8 @@ export function Search() {
           <h1 className="text-xl font-bold text-white">
             {urlQuery
               ? <>Results for <span className="text-emerald-400">"{urlQuery}"</span></>
-              : genres.length > 0 || tags.length > 0
-              ? <>Browsing <span className="text-emerald-400">{[...genres, ...tags].join(' · ')}</span></>
+              : genres.length > 0
+              ? <>Browsing <span className="text-emerald-400">{genres.join(' · ')}</span></>
               : 'Browse Anime'
             }
           </h1>
