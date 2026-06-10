@@ -10,85 +10,58 @@ api.interceptors.response.use(
   }
 )
 
-export async function getUpcomingAnime(page = 1) {
-  const { data } = await api.get('/seasons/upcoming', { params: { page } })
-  return data
+// Token-bucket queue: allows 3 requests/sec, queues the rest instead of 429ing
+let tokens = 3
+let lastRefill = Date.now()
+const pending = []
+
+function drainQueue() {
+  const now = Date.now()
+  const refill = Math.floor((now - lastRefill) * 3 / 1000)
+  if (refill > 0) { tokens = Math.min(3, tokens + refill); lastRefill = now }
+  while (pending.length > 0 && tokens > 0) {
+    tokens--
+    const { fn, resolve, reject } = pending.shift()
+    fn().then(resolve).catch(reject)
+  }
+  if (pending.length > 0) setTimeout(drainQueue, Math.ceil(1000 / 3))
 }
 
-export async function getCurrentSeason(page = 1) {
-  const { data } = await api.get('/seasons/now', { params: { page } })
-  return data
+function queued(fn) {
+  return new Promise((resolve, reject) => {
+    pending.push({ fn, resolve, reject })
+    drainQueue()
+  })
 }
 
-export async function getAnimeById(id) {
-  const { data } = await api.get(`/anime/${id}`)
-  return data.data
-}
+const get = (url, params) => queued(() => api.get(url, params ? { params } : undefined).then(r => r.data))
 
-export async function searchAnime(query, page = 1) {
-  const { data } = await api.get('/anime', { params: { q: query, status: 'upcoming', page } })
-  return data
-}
+export const getUpcomingAnime       = (page = 1)                          => get('/seasons/upcoming', { page })
+export const getCurrentSeason       = (page = 1)                          => get('/seasons/now', { page })
+export const getAnimeById           = (id)                                 => get(`/anime/${id}`).then(d => d.data)
+export const searchAnime            = (query, page = 1)                    => get('/anime', { q: query, status: 'upcoming', page })
+export const getGenres              = ()                                    => get('/genres/anime')
+export const getAnimeCharacters     = (id)                                 => get(`/anime/${id}/characters`).then(d => d.data)
+export const getAnimeRecommendations= (id)                                 => get(`/anime/${id}/recommendations`).then(d => d.data)
+export const getSeasonsList         = ()                                    => get('/seasons').then(d => d.data)
+export const getSeasonAnime         = (year, season, page = 1)             => get(`/seasons/${year}/${season}`, { page })
+export const getAnimeNews           = (id)                                 => get(`/anime/${id}/news`).then(d => d.data)
+export const getRandomAnime         = ()                                    => get('/random/anime').then(d => d.data)
+export const getSchedule            = (day)                                => get(`/schedules/${day}`)
+export const getSearchSuggestions   = (query)                              => get('/anime', { q: query, limit: 6, order_by: 'members', sort: 'desc' }).then(d => d.data)
 
-export async function searchAllAnime(query, page = 1, type = '', status = '', genreId = null) {
+export function searchAllAnime(query, page = 1, type = '', status = '', genreId = null) {
   const params = { page, order_by: 'popularity', sort: 'desc' }
-  if (query) params.q = query
-  if (type) params.type = type
-  if (status) params.status = status
+  if (query)   params.q      = query
+  if (type)    params.type   = type
+  if (status)  params.status = status
   if (genreId) params.genres = genreId
-  const { data } = await api.get('/anime', { params })
-  return data
+  return get('/anime', params)
 }
 
-export async function getGenres() {
-  const { data } = await api.get('/genres/anime')
-  return data
-}
-
-export async function getTopAnime(page = 1, type = '', filter = '') {
+export function getTopAnime(page = 1, type = '', filter = '') {
   const params = { page }
-  if (type) params.type = type
+  if (type)   params.type   = type
   if (filter) params.filter = filter
-  const { data } = await api.get('/top/anime', { params })
-  return data
-}
-
-export async function getSearchSuggestions(query) {
-  const { data } = await api.get('/anime', { params: { q: query, limit: 6, order_by: 'members', sort: 'desc' } })
-  return data.data
-}
-
-export async function getAnimeCharacters(id) {
-  const { data } = await api.get(`/anime/${id}/characters`)
-  return data.data
-}
-
-export async function getAnimeRecommendations(id) {
-  const { data } = await api.get(`/anime/${id}/recommendations`)
-  return data.data
-}
-
-export async function getSeasonsList() {
-  const { data } = await api.get('/seasons')
-  return data.data
-}
-
-export async function getSeasonAnime(year, season, page = 1) {
-  const { data } = await api.get(`/seasons/${year}/${season}`, { params: { page } })
-  return data
-}
-
-export async function getAnimeNews(id) {
-  const { data } = await api.get(`/anime/${id}/news`)
-  return data.data
-}
-
-export async function getRandomAnime() {
-  const { data } = await api.get('/random/anime')
-  return data.data
-}
-
-export async function getSchedule(day) {
-  const { data } = await api.get(`/schedules/${day}`)
-  return data
+  return get('/top/anime', params)
 }
