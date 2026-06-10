@@ -6,10 +6,17 @@ import { getSeasonsList, getSeasonAnime } from '../services/anilistApi'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { dedupByMalId } from '../utils/anime'
 
+const SEASON_COLORS = {
+  winter: '#93c5fd',  // blue-300 — icy
+  spring: '#f9a8d4',  // pink-300 — blossom
+  summer: '#fcd34d',  // amber-300 — sunny
+  fall:   '#fb923c',  // orange-400 — autumn
+}
+
 function SeasonIcon({ season }) {
   const props = {
     width: 14, height: 14, viewBox: '0 0 24 24',
-    fill: 'none', stroke: 'currentColor', strokeWidth: 1.5,
+    fill: 'none', stroke: SEASON_COLORS[season] ?? 'currentColor', strokeWidth: 1.5,
     strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true,
   }
   if (season === 'winter') return (
@@ -26,7 +33,7 @@ function SeasonIcon({ season }) {
       <ellipse cx="12" cy="7" rx="2" ry="3.5" transform="rotate(90 12 12)"/>
       <ellipse cx="12" cy="7" rx="2" ry="3.5" transform="rotate(180 12 12)"/>
       <ellipse cx="12" cy="7" rx="2" ry="3.5" transform="rotate(270 12 12)"/>
-      <circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/>
+      <circle cx="12" cy="12" r="2.5" fill={SEASON_COLORS.spring} stroke="none"/>
     </svg>
   )
   if (season === 'summer') return (
