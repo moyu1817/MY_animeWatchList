@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
@@ -77,7 +77,7 @@ export function Upcoming() {
         {isGenreFilter && (
           <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm px-3 py-1.5 rounded-md">
             <span>Genre: {genreName}</span>
-            <button onClick={clearGenre} className="hover:text-white transition-colors leading-none cursor-pointer ml-1">Ã—</button>
+            <button onClick={clearGenre} className="hover:text-white transition-colors leading-none cursor-pointer ml-1">×</button>
           </div>
         )}
       </div>
@@ -108,4 +108,3 @@ export function Upcoming() {
     </div>
   )
 }
-

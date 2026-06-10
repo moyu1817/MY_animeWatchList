@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { AnimeCard } from '../components/AnimeCard'
@@ -121,7 +121,7 @@ export function Search() {
             <span className="text-zinc-600 text-xs uppercase tracking-wide">Category</span>
             {genre && (
               <span className="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md">
-                {genre.name} Ã—
+                {genre.name} ×
               </span>
             )}
           </div>
@@ -140,7 +140,7 @@ export function Search() {
                 onClick={() => setShowAllGenres(v => !v)}
                 className="px-3 py-1 rounded-md text-sm text-emerald-400 hover:text-emerald-300 border border-zinc-800 bg-zinc-900 cursor-pointer transition-colors"
               >
-                {showAllGenres ? 'Show less â†‘' : `+${allGenres.length - 16} more â†“`}
+                {showAllGenres ? 'Show less ↑' : `+${allGenres.length - 16} more ↓`}
               </button>
             )}
           </div>
@@ -164,7 +164,7 @@ export function Search() {
               onClick={() => { setType('All'); setStatus(''); setGenre(null); setPage(1) }}
               className="px-3 py-1 rounded-md text-sm text-zinc-500 hover:text-white border border-zinc-800 hover:border-zinc-600 bg-zinc-900 transition-colors cursor-pointer self-center"
             >
-              Clear filters Ã—
+              Clear filters ×
             </button>
           )}
         </div>
@@ -183,12 +183,11 @@ export function Search() {
 
       {!isLoading && items.length > 0 && (
         <div className="flex justify-center items-center gap-3">
-          <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className={paginationBtn}>â† Prev</button>
+          <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className={paginationBtn}>← Prev</button>
           <span className="text-zinc-500 text-sm">Page {page} of {lastPage}</span>
-          <button onClick={() => setPage(p => Math.min(lastPage, p + 1))} disabled={page === lastPage} className={paginationBtn}>Next â†’</button>
+          <button onClick={() => setPage(p => Math.min(lastPage, p + 1))} disabled={page === lastPage} className={paginationBtn}>Next →</button>
         </div>
       )}
     </div>
   )
 }
-

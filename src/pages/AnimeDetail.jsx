@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getAnimeById, getAnimeCharacters, getAnimeRecommendations, getAnimeNews } from '../services/jikanApi'
@@ -99,7 +99,7 @@ export function AnimeDetail() {
     return (
       <div className="text-center py-20">
         <p className="text-zinc-600 mb-4">Anime not found.</p>
-        <Link to="/" className="text-emerald-400 hover:text-emerald-300 text-sm">â† Go back</Link>
+        <Link to="/" className="text-emerald-400 hover:text-emerald-300 text-sm">← Go back</Link>
       </div>
     )
   }
@@ -123,7 +123,7 @@ export function AnimeDetail() {
 
       {/* Content overlapping banner */}
       <div className="px-4 max-w-5xl mx-auto -mt-36 relative pb-10">
-        <button onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/')} className="flex items-center gap-1.5 text-zinc-400 hover:text-white text-sm mb-6 border border-zinc-700/60 hover:border-zinc-500 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-md transition-colors cursor-pointer">â† Back</button>
+        <button onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/')} className="flex items-center gap-1.5 text-zinc-400 hover:text-white text-sm mb-6 border border-zinc-700/60 hover:border-zinc-500 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-md transition-colors cursor-pointer">← Back</button>
 
         <div className="flex flex-col sm:flex-row gap-6">
           {/* Poster */}
@@ -141,27 +141,27 @@ export function AnimeDetail() {
                   onClick={() => setShowTrailer(true)}
                   className="w-full py-1.5 rounded-md text-sm font-medium border border-zinc-700 text-zinc-300 hover:border-emerald-500/50 hover:text-emerald-400 transition-colors cursor-pointer"
                 >
-                  â–¶ Watch Trailer
+                  ▶ Watch Trailer
                 </button>
               )}
               <div className="flex gap-2">
                 <button onClick={handleShare} className="flex-1 py-1.5 rounded-md text-xs border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer">
-                  {copied ? 'âœ“ Copied!' : 'ðŸ”— Copy'}
+                  {copied ? '✓ Copied!' : '🔗 Copy'}
                 </button>
                 <button onClick={handleShareX} className="flex-1 py-1.5 rounded-md text-xs border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-600 transition-colors cursor-pointer">
-                  ð• Share
+                  𝕏 Share
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Info â€” pushed down so title clears the banner */}
+          {/* Info — pushed down so title clears the banner */}
           <div className="flex-1 pt-2 sm:pt-14">
             <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">{title}</h1>
             {anime.title !== title && <p className="text-zinc-600 text-sm mb-3">{anime.title}</p>}
 
             <div className="flex flex-wrap gap-2 mb-4">
-              {anime.score && <span className="bg-zinc-900/80 text-emerald-400 border border-zinc-800 px-2.5 py-0.5 rounded-md text-sm">â˜… {anime.score}</span>}
+              {anime.score && <span className="bg-zinc-900/80 text-emerald-400 border border-zinc-800 px-2.5 py-0.5 rounded-md text-sm">★ {anime.score}</span>}
               {anime.status && <span className="bg-zinc-900/80 text-zinc-400 border border-zinc-800 px-2.5 py-0.5 rounded-md text-sm">{anime.status}</span>}
               {anime.type && <span className="bg-zinc-900/80 text-zinc-400 border border-zinc-800 px-2.5 py-0.5 rounded-md text-sm">{anime.type}</span>}
               {anime.episodes && <span className="bg-zinc-900/80 text-zinc-400 border border-zinc-800 px-2.5 py-0.5 rounded-md text-sm">{anime.episodes} eps</span>}
@@ -185,7 +185,7 @@ export function AnimeDetail() {
                     onClick={() => setExpanded(v => !v)}
                     className="text-emerald-400 text-xs mt-1.5 cursor-pointer hover:text-emerald-300 transition-colors"
                   >
-                    {expanded ? 'Show less â†‘' : 'Read more â†“'}
+                    {expanded ? 'Show less ↑' : 'Read more ↓'}
                   </button>
                 )}
               </div>
@@ -219,7 +219,7 @@ export function AnimeDetail() {
           <div className="mt-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-semibold text-white">Trailer</h2>
-              <button onClick={() => setShowTrailer(true)} className="text-emerald-400 hover:text-emerald-300 text-sm cursor-pointer transition-colors">Open fullscreen â†—</button>
+              <button onClick={() => setShowTrailer(true)} className="text-emerald-400 hover:text-emerald-300 text-sm cursor-pointer transition-colors">Open fullscreen ↗</button>
             </div>
             <div className="aspect-video rounded-xl overflow-hidden max-w-2xl border border-zinc-900">
               <TrailerEmbed embedUrl={anime.trailer.embed_url} title={title} />
@@ -285,7 +285,7 @@ export function AnimeDetail() {
                   )}
                   <div className="min-w-0">
                     <p className="text-white text-sm font-medium group-hover:text-emerald-400 transition-colors line-clamp-2">{article.title}</p>
-                    <p className="text-zinc-600 text-xs mt-1">{article.author_username} Â· {new Date(article.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                    <p className="text-zinc-600 text-xs mt-1">{article.author_username} · {new Date(article.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                     {article.excerpt && <p className="text-zinc-500 text-xs mt-1 line-clamp-2">{article.excerpt}</p>}
                   </div>
                 </a>
@@ -301,4 +301,3 @@ export function AnimeDetail() {
     </div>
   )
 }
-
