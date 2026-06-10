@@ -5,7 +5,7 @@ import { SkeletonCard } from '../components/SkeletonCard'
 import { getSeasonsList, getSeasonAnime } from '../services/jikanApi'
 import { usePageTitle } from '../hooks/usePageTitle'
 
-const SEASON_ICONS = { winter: '❄️', spring: '🌸', summer: '🌊', fall: '🍁' }
+const SEASON_ICONS = { winter: '❄', spring: '✿', summer: '✦', fall: '❧' }
 
 function getCurrentSeason() {
   const m = new Date().getMonth()
